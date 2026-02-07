@@ -6,19 +6,45 @@ on:
       - main
 
 jobs:
-  build:
+  test_and_format:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '11'
+
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           flutter-version: '3.38.9'
+
       - run: flutter pub get
-      - run: dart format --set-exit-if-changed .
-      - run: flutter test
+
+      - name: Check for formatting changes
+        id: format
+        run: dart format --set-exit-if-changed .
+        continue-on-error: true
+
+      - name: Commit and push formatting changes
+        if: steps.format.outcome == 'failure'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto format dart files"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fail workflow if formatting was required
+        if: steps.format.outcome == 'failure'
+        run: |
+          echo "Code was not formatted. A commit with formatted files has been pushed."
+          echo "This workflow run will fail. The new commit will trigger a new run."
+          exit 1
+
+      - name: Run tests
+        if: steps.format.outcome == 'success'
+        run: flutter test
