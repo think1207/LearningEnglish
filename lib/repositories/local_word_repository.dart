@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +13,8 @@ class LocalWordRepository implements BaseWordRepository {
   LocalWordRepository._internal();
 
   static const String _storageKey = 'user_study_data';
+
+  late final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   final List<WordCard> _masterData = [
     WordCard(id: '1', text: 'Agile', meaning: '俊敏な / アジャイル開発', category: 'IT'),
@@ -48,7 +49,7 @@ class LocalWordRepository implements BaseWordRepository {
 
   @override
   Future<List<WordCard>> loadWords() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _prefs;
     String? jsonString = prefs.getString(_storageKey);
 
     if (jsonString == null) {
@@ -65,15 +66,22 @@ class LocalWordRepository implements BaseWordRepository {
   }
 
   @override
+  Future<void> addWord(WordCard newWord) async {
+    final currentList = await loadWords();
+    currentList.add(newWord);
+    await saveWords(currentList);
+  }
+
+  @override
   Future<void> saveWords(List<WordCard> words) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _prefs;
     String jsonString = jsonEncode(words.map((w) => w.toJson()).toList());
     await prefs.setString(_storageKey, jsonString);
   }
 
   @override
   Future<void> resetData() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _prefs;
     await prefs.remove(_storageKey);
   }
 }

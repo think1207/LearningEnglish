@@ -7,7 +7,9 @@ import '../widgets/word_card.dart';
 enum SessionPhase { sorting, reviewReady, review, completed }
 
 class LearningSessionScreen extends StatefulWidget {
-  const LearningSessionScreen({super.key});
+  final List<WordCard> initialQueue;
+
+  const LearningSessionScreen({super.key, required this.initialQueue});
 
   @override
   State<LearningSessionScreen> createState() => _LearningSessionScreenState();
@@ -16,42 +18,26 @@ class LearningSessionScreen extends StatefulWidget {
 class _LearningSessionScreenState extends State<LearningSessionScreen> {
   final _repo = LocalWordRepository();
 
-  List<WordCard> _allWords = [];
   List<WordCard> _currentQueue = [];
   final List<WordCard> _retryList = [];
 
   SessionPhase _phase = SessionPhase.sorting;
   bool _isAnswerVisible = false;
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _currentQueue = List.from(widget.initialQueue);
   }
 
-  Future<void> _loadData() async {
-    final words = await _repo.loadWords();
-
-    final activeWords =
-        words.where((w) => w.status != WordStatus.mastered).toList();
-
-    activeWords.shuffle();
-    final todaysQueue = activeWords.take(10).toList();
-
-    setState(() {
-      _allWords = words;
-      _currentQueue = todaysQueue;
-      _isLoading = false;
-
-      if (todaysQueue.isEmpty && words.isNotEmpty) {
-        _phase = SessionPhase.completed;
+  void _saveProgress(WordCard card) {
+    _repo.loadWords().then((allWords) {
+      final index = allWords.indexWhere((w) => w.id == card.id);
+      if (index != -1) {
+        allWords[index] = card;
+        _repo.saveWords(allWords);
       }
     });
-  }
-
-  Future<void> _saveProgress() async {
-    await _repo.saveWords(_allWords);
   }
 
   void _toggleCard() {
@@ -82,7 +68,7 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
       _currentQueue.removeAt(0);
       _isAnswerVisible = false;
 
-      _saveProgress();
+      _saveProgress(currentCard);
       _checkPhaseTransition();
     });
   }
@@ -112,41 +98,18 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
     });
   }
 
-  Future<void> _resetAndReload() async {
-    await _repo.resetData();
-    setState(() {
-      _isLoading = true;
-      _phase = SessionPhase.sorting;
-      _retryList.clear();
-    });
-    await _loadData();
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
         backgroundColor: _getAppBarColor(),
         foregroundColor: Colors.white,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: "Reset learning status...",
-            onPressed: _resetAndReload,
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            if (_phase == SessionPhase.sorting || _phase == SessionPhase.review)
-              _buildProgressBar(),
+            _buildProgressBar(),
             Expanded(child: _buildBodyContent()),
           ],
         ),
@@ -156,8 +119,9 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
 
   Widget _buildProgressBar() {
     return LinearProgressIndicator(
-      value:
-          _phase == SessionPhase.review ? (_currentQueue.isEmpty ? 1.0 : 0.5) : null,
+      value: _phase == SessionPhase.review
+          ? (_currentQueue.isEmpty ? 1.0 : 0.5)
+          : null,
       backgroundColor: Colors.grey.shade300,
       color: _getAppBarColor(),
     );
@@ -190,13 +154,6 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   }
 
   Widget _buildBodyContent() {
-    if (_currentQueue.isEmpty) {
-      if (_phase == SessionPhase.completed) return _buildCompletedScreen();
-      if (_phase == SessionPhase.reviewReady) return _buildReviewReadyScreen();
-      // Handles other empty states, e.g., initial load after sorting
-      return const Center(child: CircularProgressIndicator());
-    }
-
     switch (_phase) {
       case SessionPhase.sorting:
       case SessionPhase.review:
@@ -209,6 +166,7 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   }
 
   Widget _buildCardStack() {
+    if (_currentQueue.isEmpty) return const Center(child: Text("Loading..."));
     final topCardData = _currentQueue.first;
     final secondCardData = _currentQueue.length > 1 ? _currentQueue[1] : null;
 
@@ -266,9 +224,6 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   }
 
   Widget _buildCompletedScreen() {
-    final masteredCount =
-        _allWords.where((w) => w.status == WordStatus.mastered).length;
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -279,13 +234,11 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
             "本日の学習終了！",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
-          Text(
-            "現在のマスター単語: $masteredCount / ${_allWords.length}",
-            style: const TextStyle(fontSize: 18, color: Colors.black87),
+          const SizedBox(height: 40),
+          OutlinedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("ホームに戻る"),
           ),
-          const SizedBox(height: 10),
-          const Text("明日も頑張りましょう。", style: TextStyle(color: Colors.grey)),
         ],
       ),
     );
