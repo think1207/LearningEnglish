@@ -11,7 +11,11 @@ void main() {
   ];
 
   // Helper function to reliably perform a swipe gesture for the test.
-  Future<void> swipeCard(WidgetTester tester, Finder card, Offset offset) async {
+  Future<void> swipeCard(
+    WidgetTester tester,
+    Finder card,
+    Offset offset,
+  ) async {
     // Simulate the drag gesture.
     await tester.drag(card, offset);
     // Pump a few frames to ensure the drag animation completes and the
@@ -36,13 +40,21 @@ void main() {
     expect(find.byKey(const ValueKey('1')), findsOneWidget);
 
     // Swipe the first card right.
-    await swipeCard(tester, find.byKey(const ValueKey('1')), const Offset(200, 0));
+    await swipeCard(
+      tester,
+      find.byKey(const ValueKey('1')),
+      const Offset(200, 0),
+    );
 
     // Verify the second card is now the active card.
     expect(find.byKey(const ValueKey('2')), findsOneWidget);
 
     // Swipe the second card right.
-    await swipeCard(tester, find.byKey(const ValueKey('2')), const Offset(200, 0));
+    await swipeCard(
+      tester,
+      find.byKey(const ValueKey('2')),
+      const Offset(200, 0),
+    );
 
     // Verify the completion screen is shown.
     expect(find.text('本日の学習終了！'), findsOneWidget);
@@ -62,13 +74,21 @@ void main() {
     expect(find.byKey(const ValueKey('1')), findsOneWidget);
 
     // Swipe left to mark for review.
-    await swipeCard(tester, find.byKey(const ValueKey('1')), const Offset(-200, 0));
+    await swipeCard(
+      tester,
+      find.byKey(const ValueKey('1')),
+      const Offset(-200, 0),
+    );
 
     // Verify the second card is now active.
     expect(find.byKey(const ValueKey('2')), findsOneWidget);
 
     // Swipe the second card right.
-    await swipeCard(tester, find.byKey(const ValueKey('2')), const Offset(200, 0));
+    await swipeCard(
+      tester,
+      find.byKey(const ValueKey('2')),
+      const Offset(200, 0),
+    );
 
     // Verify the review ready screen is shown.
     expect(find.text('準備完了'), findsOneWidget);
@@ -82,7 +102,11 @@ void main() {
     expect(find.byKey(const ValueKey('1')), findsOneWidget);
 
     // Swipe the card right to master it.
-    await swipeCard(tester, find.byKey(const ValueKey('1')), const Offset(200, 0));
+    await swipeCard(
+      tester,
+      find.byKey(const ValueKey('1')),
+      const Offset(200, 0),
+    );
 
     // Verify the completion screen is shown.
     expect(find.text('本日の学習終了！'), findsOneWidget);

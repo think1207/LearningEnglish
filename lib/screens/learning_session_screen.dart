@@ -117,7 +117,8 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
     switch (_phase) {
       case SessionPhase.sorting:
         if (widget.initialQueue.isNotEmpty) {
-          value = (widget.initialQueue.length - _currentQueue.length) /
+          value =
+              (widget.initialQueue.length - _currentQueue.length) /
               widget.initialQueue.length;
         } else {
           value = 1.0;

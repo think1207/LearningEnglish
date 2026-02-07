@@ -6,9 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   Widget createHomeScreen() {
-    return const MaterialApp(
-      home: HomeScreen(),
-    );
+    return const MaterialApp(home: HomeScreen());
   }
 
   // Helper to set a larger screen size for tests to avoid scrolling.
@@ -19,8 +17,9 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
   }
 
-  testWidgets('HomeScreen shows loading indicator and then content',
-      (tester) async {
+  testWidgets('HomeScreen shows loading indicator and then content', (
+    tester,
+  ) async {
     SharedPreferences.setMockInitialValues({});
     await setLargeScreenSize(tester);
 
