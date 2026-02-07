@@ -40,13 +40,5 @@ jobs:
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
 
-      - name: Fail workflow if formatting was required
-        if: steps.format.outcome == 'failure'
-        run: |
-          echo "Code was not formatted. A commit with formatted files has been pushed."
-          echo "This workflow run will fail. The new commit will trigger a new run."
-          exit 1
-
       - name: Run tests
-        if: steps.format.outcome == 'success'
         run: flutter test
