@@ -18,6 +18,24 @@ class WordCard {
     this.proficiency = 0,
   });
 
+  WordCard copyWith({
+    String? id,
+    String? text,
+    String? meaning,
+    String? category,
+    WordStatus? status,
+    int? proficiency,
+  }) {
+    return WordCard(
+      id: id ?? this.id,
+      text: text ?? this.text,
+      meaning: meaning ?? this.meaning,
+      category: category ?? this.category,
+      status: status ?? this.status,
+      proficiency: proficiency ?? this.proficiency,
+    );
+  }
+
   factory WordCard.fromJson(Map<String, dynamic> json) {
     return WordCard(
       id: json['id'],

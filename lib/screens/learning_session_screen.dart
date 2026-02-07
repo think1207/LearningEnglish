@@ -20,6 +20,7 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
 
   List<WordCard> _currentQueue = [];
   final List<WordCard> _retryList = [];
+  int _reviewTotal = 0;
 
   SessionPhase _phase = SessionPhase.sorting;
   bool _isAnswerVisible = false;
@@ -69,30 +70,24 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
       _isAnswerVisible = false;
 
       _saveProgress(currentCard);
-      _checkPhaseTransition();
-    });
-  }
 
-  void _checkPhaseTransition() {
-    if (_currentQueue.isNotEmpty) return;
-
-    if (_phase == SessionPhase.sorting || _phase == SessionPhase.review) {
-      if (_retryList.isNotEmpty) {
-        setState(() {
-          _phase = SessionPhase.reviewReady;
-        });
-      } else {
-        setState(() {
-          _phase = SessionPhase.completed;
-        });
+      if (_currentQueue.isEmpty) {
+        if (_phase == SessionPhase.sorting || _phase == SessionPhase.review) {
+          if (_retryList.isNotEmpty) {
+            _phase = SessionPhase.reviewReady;
+          } else {
+            _phase = SessionPhase.completed;
+          }
+        }
       }
-    }
+    });
   }
 
   void _startReview() {
     setState(() {
       _phase = SessionPhase.review;
       _currentQueue = List.from(_retryList);
+      _reviewTotal = _retryList.length;
       _currentQueue.shuffle();
       _retryList.clear();
     });
@@ -118,10 +113,34 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   }
 
   Widget _buildProgressBar() {
+    double? value;
+    switch (_phase) {
+      case SessionPhase.sorting:
+        if (widget.initialQueue.isNotEmpty) {
+          value =
+              (widget.initialQueue.length - _currentQueue.length) /
+              widget.initialQueue.length;
+        } else {
+          value = 1.0;
+        }
+        break;
+      case SessionPhase.review:
+        if (_reviewTotal > 0) {
+          value = (_reviewTotal - _currentQueue.length) / _reviewTotal;
+        } else {
+          value = 1.0;
+        }
+        break;
+      case SessionPhase.reviewReady:
+        value = 0.0;
+        break;
+      case SessionPhase.completed:
+        value = 1.0;
+        break;
+    }
+
     return LinearProgressIndicator(
-      value: _phase == SessionPhase.review
-          ? (_currentQueue.isEmpty ? 1.0 : 0.5)
-          : null,
+      value: value,
       backgroundColor: Colors.grey.shade300,
       color: _getAppBarColor(),
     );
