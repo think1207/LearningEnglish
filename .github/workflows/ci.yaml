@@ -18,6 +18,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.22.0' # Flutterのバージョンを固定
       - run: flutter pub get
-      - run: flutter format --set-exit-if-changed .
+      - run: dart format --set-exit-if-changed . # dart format を直接実行
       - run: flutter test
