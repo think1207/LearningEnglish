@@ -14,7 +14,7 @@ class LocalWordRepository implements BaseWordRepository {
 
   static const String _storageKey = 'user_study_data';
 
-  late final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
   final List<WordCard> _masterData = [
     WordCard(id: '1', text: 'Agile', meaning: '俊敏な / アジャイル開発', category: 'IT'),

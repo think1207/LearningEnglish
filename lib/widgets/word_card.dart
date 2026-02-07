@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/word.dart';
 
-class SwipeableCard extends StatelessWidget {
+class SwipeableCard extends StatefulWidget {
   final WordCard card;
   final bool isAnswerVisible;
   final VoidCallback onTap;
@@ -17,26 +17,81 @@ class SwipeableCard extends StatelessWidget {
   });
 
   @override
+  State<SwipeableCard> createState() => _SwipeableCardState();
+}
+
+class _SwipeableCardState extends State<SwipeableCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Offset> _animation;
+  Offset _dragOffset = Offset.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onPanStart(DragStartDetails details) {
+    _dragOffset = Offset.zero;
+  }
+
+  void _onPanUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragOffset += details.delta;
+    });
+  }
+
+  void _onPanEnd(DragEndDetails details) {
+    if (_dragOffset.dx.abs() > 100) {
+      // Trigger swipe completion
+      widget.onSwiped(_dragOffset.dx > 0);
+    } else {
+      // Animate back to center if not a valid swipe
+      _animation = Tween<Offset>(begin: _dragOffset, end: Offset.zero).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+      );
+
+      _animationController.reset();
+      _animationController.forward().then((_) {
+        setState(() {
+          _dragOffset = Offset.zero;
+        });
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Draggable(
-      feedback: Transform.rotate(
-        angle: 0.1,
-        child: Material(
-          color: Colors.transparent,
-          child: StaticCard(card: card, isVisible: isAnswerVisible),
-        ),
-      ),
-      childWhenDragging: Container(),
-      onDragEnd: (details) {
-        if (details.offset.dx > 100) {
-          onSwiped(true);
-        } else if (details.offset.dx < -100) {
-          onSwiped(false);
-        }
-      },
-      child: GestureDetector(
-        onTap: onTap,
-        child: StaticCard(card: card, isVisible: isAnswerVisible),
+    return GestureDetector(
+      onTap: widget.onTap,
+      onPanStart: _onPanStart,
+      onPanUpdate: _onPanUpdate,
+      onPanEnd: _onPanEnd,
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          final offset = _animationController.isAnimating
+              ? _animation.value
+              : _dragOffset;
+          return Transform.translate(
+            offset: offset,
+            child: Transform.rotate(
+              angle: offset.dx / (MediaQuery.of(context).size.width / 2) * 0.4,
+              child: child,
+            ),
+          );
+        },
+        child: StaticCard(card: widget.card, isVisible: widget.isAnswerVisible),
       ),
     );
   }
