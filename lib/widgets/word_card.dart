@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../data_models.dart';
+import '../models/word.dart';
 
 class SwipeableCard extends StatelessWidget {
   final WordCard card;
   final bool isAnswerVisible;
   final VoidCallback onTap;
-  final Function(bool isRight) onSwiped;
+  final void Function(bool) onSwiped;
 
   const SwipeableCard({
     super.key,
@@ -68,25 +68,39 @@ class StaticCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              card.category,
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  card.category,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                ),
+              ),
+              Row(
+                children: List.generate(
+                  3,
+                  (index) => Icon(
+                    index < card.proficiency ? Icons.star : Icons.star_border,
+                    color: Colors.amber,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ],
           ),
           const Spacer(),
           Text(
             card.text,
-            style: const TextStyle(
-              fontSize: 42,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -98,11 +112,7 @@ class StaticCard extends StatelessWidget {
                 const Divider(height: 40),
                 Text(
                   card.meaning,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: const TextStyle(fontSize: 24, color: Colors.black54),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -110,13 +120,13 @@ class StaticCard extends StatelessWidget {
           ),
           const Spacer(),
           if (!isVisible)
-            Text("タップしてめくる", style: TextStyle(color: Colors.grey[400]))
+            Text("タップしてめくる", style: TextStyle(color: Colors.grey.shade400))
           else
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("← 知らない", style: TextStyle(color: Colors.red[300])),
-                Text("知ってる →", style: TextStyle(color: Colors.green[300])),
+                Text("← 知らない", style: TextStyle(color: Colors.red.shade300)),
+                Text("知ってる →", style: TextStyle(color: Colors.green.shade300)),
               ],
             ),
         ],

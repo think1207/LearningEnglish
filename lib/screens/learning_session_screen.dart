@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data_models.dart';
-import '../mock_data.dart';
+import '../models/word.dart';
+import '../repositories/local_word_repository.dart';
 import '../widgets/word_card.dart';
 
 enum SessionPhase { sorting, reviewReady, review, completed }
@@ -14,17 +14,44 @@ class LearningSessionScreen extends StatefulWidget {
 }
 
 class _LearningSessionScreenState extends State<LearningSessionScreen> {
+  final _repo = LocalWordRepository();
+
+  List<WordCard> _allWords = [];
   List<WordCard> _currentQueue = [];
   final List<WordCard> _retryList = [];
-  final List<WordCard> _knownList = [];
 
   SessionPhase _phase = SessionPhase.sorting;
   bool _isAnswerVisible = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _currentQueue = List.from(initialData);
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final words = await _repo.loadWords();
+
+    final activeWords =
+        words.where((w) => w.status != WordStatus.mastered).toList();
+
+    activeWords.shuffle();
+    final todaysQueue = activeWords.take(10).toList();
+
+    setState(() {
+      _allWords = words;
+      _currentQueue = todaysQueue;
+      _isLoading = false;
+
+      if (todaysQueue.isEmpty && words.isNotEmpty) {
+        _phase = SessionPhase.completed;
+      }
+    });
+  }
+
+  Future<void> _saveProgress() async {
+    await _repo.saveWords(_allWords);
   }
 
   void _toggleCard() {
@@ -40,14 +67,22 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
 
     setState(() {
       if (isRight) {
-        _knownList.add(currentCard);
+        currentCard.proficiency++;
+        if (currentCard.proficiency >= 3) {
+          currentCard.status = WordStatus.mastered;
+        } else {
+          currentCard.status = WordStatus.learning;
+        }
       } else {
+        currentCard.proficiency = 0;
+        currentCard.status = WordStatus.learning;
         _retryList.add(currentCard);
       }
 
       _currentQueue.removeAt(0);
       _isAnswerVisible = false;
 
+      _saveProgress();
       _checkPhaseTransition();
     });
   }
@@ -55,28 +90,10 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   void _checkPhaseTransition() {
     if (_currentQueue.isNotEmpty) return;
 
-    if (_phase == SessionPhase.sorting) {
+    if (_phase == SessionPhase.sorting || _phase == SessionPhase.review) {
       if (_retryList.isNotEmpty) {
         setState(() {
           _phase = SessionPhase.reviewReady;
-        });
-      } else {
-        setState(() {
-          _phase = SessionPhase.completed;
-        });
-      }
-    } else if (_phase == SessionPhase.review) {
-      if (_retryList.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('間違えた単語をもう一度！'),
-            duration: Duration(seconds: 1),
-          ),
-        );
-        setState(() {
-          _currentQueue = List.from(_retryList);
-          _currentQueue.shuffle();
-          _retryList.clear();
         });
       } else {
         setState(() {
@@ -90,44 +107,59 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
     setState(() {
       _phase = SessionPhase.review;
       _currentQueue = List.from(_retryList);
+      _currentQueue.shuffle();
       _retryList.clear();
     });
   }
 
-  void _resetSession() {
+  Future<void> _resetAndReload() async {
+    await _repo.resetData();
     setState(() {
+      _isLoading = true;
       _phase = SessionPhase.sorting;
-      _currentQueue = List.from(initialData);
-      _knownList.clear();
       _retryList.clear();
-      _isAnswerVisible = false;
     });
+    await _loadData();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_getAppBarTitle()),
         backgroundColor: _getAppBarColor(),
         foregroundColor: Colors.white,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: "Reset learning status...",
+            onPressed: _resetAndReload,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
             if (_phase == SessionPhase.sorting || _phase == SessionPhase.review)
-              LinearProgressIndicator(
-                value: _phase == SessionPhase.review
-                    ? (_currentQueue.isEmpty ? 1.0 : 0.5)
-                    : null,
-                backgroundColor: Colors.grey.shade300,
-                color: _getAppBarColor(),
-              ),
+              _buildProgressBar(),
             Expanded(child: _buildBodyContent()),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return LinearProgressIndicator(
+      value:
+          _phase == SessionPhase.review ? (_currentQueue.isEmpty ? 1.0 : 0.5) : null,
+      backgroundColor: Colors.grey.shade300,
+      color: _getAppBarColor(),
     );
   }
 
@@ -158,6 +190,13 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   }
 
   Widget _buildBodyContent() {
+    if (_currentQueue.isEmpty) {
+      if (_phase == SessionPhase.completed) return _buildCompletedScreen();
+      if (_phase == SessionPhase.reviewReady) return _buildReviewReadyScreen();
+      // Handles other empty states, e.g., initial load after sorting
+      return const Center(child: CircularProgressIndicator());
+    }
+
     switch (_phase) {
       case SessionPhase.sorting:
       case SessionPhase.review:
@@ -170,10 +209,6 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
   }
 
   Widget _buildCardStack() {
-    if (_currentQueue.isEmpty) {
-      return const Center(child: Text('Loading'));
-    }
-
     final topCardData = _currentQueue.first;
     final secondCardData = _currentQueue.length > 1 ? _currentQueue[1] : null;
 
@@ -206,47 +241,34 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
 
   Widget _buildReviewReadyScreen() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.repeat, size: 80, color: Colors.orange),
-            const SizedBox(height: 24),
-            const Text(
-              '仕分け完了！',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.repeat, size: 80, color: Colors.orange),
+          const SizedBox(height: 20),
+          Text(
+            "苦手な ${_retryList.length}語を復習します",
+            style: const TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 40),
+          ElevatedButton(
+            onPressed: _startReview,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
             ),
-            const SizedBox(height: 16),
-            Text(
-              "「知らない」と答えた ${_retryList.length}個の単語を\n覚えるまで繰り返します。",
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: _startReview,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 16,
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              child: const Text("復習スタート"),
-            ),
-          ],
-        ),
+            child: const Text("スタート"),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCompletedScreen() {
+    final masteredCount =
+        _allWords.where((w) => w.status == WordStatus.mastered).length;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -259,14 +281,11 @@ class _LearningSessionScreenState extends State<LearningSessionScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            "合計学習数: ${_knownList.length + _retryList.length}単語",
-            style: const TextStyle(fontSize: 16, color: Colors.black54),
+            "現在のマスター単語: $masteredCount / ${_allWords.length}",
+            style: const TextStyle(fontSize: 18, color: Colors.black87),
           ),
-          const SizedBox(height: 40),
-          OutlinedButton(
-            onPressed: _resetSession,
-            child: const Text("最初に戻る (デバッグ用)"),
-          ),
+          const SizedBox(height: 10),
+          const Text("明日も頑張りましょう。", style: TextStyle(color: Colors.grey)),
         ],
       ),
     );
