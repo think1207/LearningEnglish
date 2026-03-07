@@ -72,7 +72,9 @@ class _SwipeableCardState extends State<SwipeableCard>
       // 閾値に満たない場合は元に戻すアニメーション
       _animation = Tween<Offset>(begin: _dragOffset, end: Offset.zero).animate(
         CurvedAnimation(
-            parent: _animationController, curve: Curves.easeOutBack),
+          parent: _animationController,
+          curve: Curves.easeOutBack,
+        ),
       );
 
       _animationController.reset();
@@ -103,9 +105,13 @@ class _SwipeableCardState extends State<SwipeableCard>
           // ドラッグ量に応じて枠線の色を変化させる
           Color borderColor = Colors.transparent;
           if (offset.dx < -50) {
-            borderColor = const Color(0xFFD97061).withOpacity(0.5); // _dangerColor
+            borderColor = const Color(
+              0xFFD97061,
+            ).withOpacity(0.5); // _dangerColor
           } else if (offset.dx > 50) {
-            borderColor = const Color(0xFF8BA094).withOpacity(0.5); // _primaryColor
+            borderColor = const Color(
+              0xFF8BA094,
+            ).withOpacity(0.5); // _primaryColor
           }
 
           return Transform.translate(
@@ -158,7 +164,7 @@ class StaticCard extends StatelessWidget {
             color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -220,8 +226,8 @@ class StaticCard extends StatelessWidget {
                 SizedBox(width: 8),
                 Text('左右にスワイプ', style: TextStyle(color: Colors.black38)),
               ],
-            )
-          ]
+            ),
+          ],
         ],
       ),
     );

@@ -6,8 +6,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   final testWords = [
-    WordCard(id: '1', text: 'Word 1', meaning: 'Meaning 1', category: 'test', partOfSpeech: 'Noun'),
-    WordCard(id: '2', text: 'Word 2', meaning: 'Meaning 2', category: 'test', partOfSpeech: 'Noun'),
+    WordCard(
+      id: '1',
+      text: 'Word 1',
+      meaning: 'Meaning 1',
+      category: 'test',
+      partOfSpeech: 'Noun',
+    ),
+    WordCard(
+      id: '2',
+      text: 'Word 2',
+      meaning: 'Meaning 2',
+      category: 'test',
+      partOfSpeech: 'Noun',
+    ),
   ];
 
   // Helper function to reliably perform a swipe gesture for the test.

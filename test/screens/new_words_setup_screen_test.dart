@@ -6,9 +6,27 @@ import 'package:banexy/screens/sorting_screen.dart';
 
 void main() {
   final testWords = [
-    WordCard(id: '1', text: 'Apple', meaning: 'りんご', category: 'General', partOfSpeech: 'Noun'),
-    WordCard(id: '2', text: 'Code', meaning: 'コード', category: 'Technology', partOfSpeech: 'Noun'),
-    WordCard(id: '3', text: 'Meeting', meaning: '会議', category: 'Business', partOfSpeech: 'Noun'),
+    WordCard(
+      id: '1',
+      text: 'Apple',
+      meaning: 'りんご',
+      category: 'General',
+      partOfSpeech: 'Noun',
+    ),
+    WordCard(
+      id: '2',
+      text: 'Code',
+      meaning: 'コード',
+      category: 'Technology',
+      partOfSpeech: 'Noun',
+    ),
+    WordCard(
+      id: '3',
+      text: 'Meeting',
+      meaning: '会議',
+      category: 'Business',
+      partOfSpeech: 'Noun',
+    ),
     WordCard(
       id: '4',
       text: 'Done',
@@ -113,7 +131,7 @@ void main() {
         text: 'Flutter',
         meaning: 'フラッター',
         category: 'Technology',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
     ];
 

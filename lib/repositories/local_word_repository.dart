@@ -17,7 +17,13 @@ class LocalWordRepository implements BaseWordRepository {
   Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
   final List<WordCard> _masterData = [
-    WordCard(id: '1', text: 'Agile', meaning: '俊敏な / アジャイル開発', category: 'Technology', partOfSpeech: 'Noun'),
+    WordCard(
+      id: '1',
+      text: 'Agile',
+      meaning: '俊敏な / アジャイル開発',
+      category: 'Technology',
+      partOfSpeech: 'Noun',
+    ),
     WordCard(
       id: '2',
       text: 'Consensus',
@@ -46,20 +52,26 @@ class LocalWordRepository implements BaseWordRepository {
       category: 'Technology',
       partOfSpeech: 'Noun',
     ),
-    WordCard(id: '6', text: 'Pivot', meaning: '方向転換', category: 'Business', partOfSpeech: 'Noun'),
+    WordCard(
+      id: '6',
+      text: 'Pivot',
+      meaning: '方向転換',
+      category: 'Business',
+      partOfSpeech: 'Noun',
+    ),
     WordCard(
       id: '7',
       text: 'Disruptive',
       meaning: '破壊的な',
       category: 'Business',
-      partOfSpeech: 'Noun'
+      partOfSpeech: 'Noun',
     ),
     WordCard(
       id: '8',
       text: 'Retention',
       meaning: '維持 / 保持率',
       category: 'Business',
-      partOfSpeech: 'Noun'
+      partOfSpeech: 'Noun',
     ),
   ];
 

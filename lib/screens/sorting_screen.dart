@@ -144,7 +144,8 @@ class _SortingScreenState extends State<SortingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            if (_phase == SessionPhase.sorting || _phase == SessionPhase.review) ...[
+            if (_phase == SessionPhase.sorting ||
+                _phase == SessionPhase.review) ...[
               _buildProgressHeader(),
               _buildSwipeHints(),
             ],
@@ -179,10 +180,7 @@ class _SortingScreenState extends State<SortingScreen> {
           const SizedBox(height: 2),
           Text(
             _getAppBarSubtitle(),
-            style: const TextStyle(
-              color: Colors.black54,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Colors.black54, fontSize: 12),
           ),
         ],
       ),
@@ -191,25 +189,35 @@ class _SortingScreenState extends State<SortingScreen> {
 
   String _getAppBarTitle() {
     switch (_phase) {
-      case SessionPhase.sorting: return 'Sort';
-      case SessionPhase.reviewReady: return 'Ready';
-      case SessionPhase.review: return 'Review';
-      case SessionPhase.completed: return 'Completed';
+      case SessionPhase.sorting:
+        return 'Sort';
+      case SessionPhase.reviewReady:
+        return 'Ready';
+      case SessionPhase.review:
+        return 'Review';
+      case SessionPhase.completed:
+        return 'Completed';
     }
   }
 
   String _getAppBarSubtitle() {
     switch (_phase) {
-      case SessionPhase.sorting: return '学習する単語を仕分け';
-      case SessionPhase.reviewReady: return '復習の準備ができました';
-      case SessionPhase.review: return '苦手な単語を復習';
-      case SessionPhase.completed: return 'お疲れ様でした！';
+      case SessionPhase.sorting:
+        return '学習する単語を仕分け';
+      case SessionPhase.reviewReady:
+        return '復習の準備ができました';
+      case SessionPhase.review:
+        return '苦手な単語を復習';
+      case SessionPhase.completed:
+        return 'お疲れ様でした！';
     }
   }
 
   Widget _buildProgressHeader() {
     final processedCount = _initialCount - _currentQueue.length;
-    final progressValue = _initialCount > 0 ? processedCount / _initialCount : 1.0;
+    final progressValue = _initialCount > 0
+        ? processedCount / _initialCount
+        : 1.0;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -228,7 +236,10 @@ class _SortingScreenState extends State<SortingScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(16),
@@ -239,11 +250,14 @@ class _SortingScreenState extends State<SortingScreen> {
                     const SizedBox(width: 4),
                     Text(
                       widget.category,
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -285,7 +299,11 @@ class _SortingScreenState extends State<SortingScreen> {
             ),
             child: Row(
               children: [
-                Icon(Icons.cancel_outlined, color: leftOpacity > 0 ? _dangerColor : Colors.black26, size: 18),
+                Icon(
+                  Icons.cancel_outlined,
+                  color: leftOpacity > 0 ? _dangerColor : Colors.black26,
+                  size: 18,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   "Don't know",
@@ -316,10 +334,14 @@ class _SortingScreenState extends State<SortingScreen> {
                   ),
                 ),
                 const SizedBox(width: 4),
-                Icon(Icons.check_circle_outline, color: rightOpacity > 0 ? _primaryColor : Colors.black26, size: 18),
+                Icon(
+                  Icons.check_circle_outline,
+                  color: rightOpacity > 0 ? _primaryColor : Colors.black26,
+                  size: 18,
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -408,13 +430,18 @@ class _SortingScreenState extends State<SortingScreen> {
             borderRadius: BorderRadius.circular(28),
           ),
           side: BorderSide(
-            color: _history.isEmpty ? Colors.grey.shade200 : Colors.grey.shade400,
+            color: _history.isEmpty
+                ? Colors.grey.shade200
+                : Colors.grey.shade400,
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.undo, color: _history.isEmpty ? Colors.black26 : _textColorDark),
+            Icon(
+              Icons.undo,
+              color: _history.isEmpty ? Colors.black26 : _textColorDark,
+            ),
             const SizedBox(width: 8),
             Text(
               'Undo',
@@ -448,7 +475,9 @@ class _SortingScreenState extends State<SortingScreen> {
               backgroundColor: _dangerColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: const Text("スタート", style: TextStyle(fontSize: 18)),
           ),
@@ -466,14 +495,20 @@ class _SortingScreenState extends State<SortingScreen> {
           const SizedBox(height: 24),
           const Text(
             "本日の学習終了！",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: _textColorDark),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: _textColorDark,
+            ),
           ),
           const SizedBox(height: 40),
           OutlinedButton(
             onPressed: () => Navigator.pop(context),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: const Text("ホームに戻る", style: TextStyle(fontSize: 16)),
           ),

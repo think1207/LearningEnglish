@@ -12,44 +12,56 @@ void main() {
         text: 'Agile',
         meaning: '俊敏な / アジャイル開発',
         category: 'Technology',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
       WordCard(
         id: '2',
         text: 'Consensus',
         meaning: '合意 / 総意',
         category: 'Business',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
       WordCard(
         id: '3',
         text: 'Legacy',
         meaning: '遺産 / (IT)古いシステム',
         category: 'Technology',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
       WordCard(
         id: '4',
         text: 'Stakeholder',
         meaning: '利害関係者',
         category: 'Business',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
-      WordCard(id: '5', text: 'Scalability', meaning: '拡張性', category: 'Technology', partOfSpeech: 'Noun'),
-      WordCard(id: '6', text: 'Pivot', meaning: '方向転換', category: 'Business', partOfSpeech: 'Noun'),
+      WordCard(
+        id: '5',
+        text: 'Scalability',
+        meaning: '拡張性',
+        category: 'Technology',
+        partOfSpeech: 'Noun',
+      ),
+      WordCard(
+        id: '6',
+        text: 'Pivot',
+        meaning: '方向転換',
+        category: 'Business',
+        partOfSpeech: 'Noun',
+      ),
       WordCard(
         id: '7',
         text: 'Disruptive',
         meaning: '破壊的な',
         category: 'Business',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
       WordCard(
         id: '8',
         text: 'Retention',
         meaning: '維持 / 保持率',
         category: 'Business',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       ),
     ];
 
@@ -75,7 +87,7 @@ void main() {
         text: 'test',
         meaning: 'テスト',
         category: 'Test',
-        partOfSpeech: 'Noun'
+        partOfSpeech: 'Noun',
       );
       await repository.addWord(newWord);
       final words = await repository.loadWords();
@@ -85,7 +97,13 @@ void main() {
 
     test('saveWords saves a list of words', () async {
       final customWords = [
-        WordCard(id: '10', text: 'custom', meaning: 'カスタム', category: 'Test', partOfSpeech: 'Noun'),
+        WordCard(
+          id: '10',
+          text: 'custom',
+          meaning: 'カスタム',
+          category: 'Test',
+          partOfSpeech: 'Noun',
+        ),
       ];
       await repository.saveWords(customWords);
       final words = await repository.loadWords();
@@ -95,7 +113,13 @@ void main() {
 
     test('resetData clears all words from SharedPreferences', () async {
       final customWords = [
-        WordCard(id: '10', text: 'custom', meaning: 'カスタム', category: 'Test', partOfSpeech: 'Noun'),
+        WordCard(
+          id: '10',
+          text: 'custom',
+          meaning: 'カスタム',
+          category: 'Test',
+          partOfSpeech: 'Noun',
+        ),
       ];
       await repository.saveWords(customWords);
       var words = await repository.loadWords();
