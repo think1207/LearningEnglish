@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:banexy/screens/new_words_setup_screen.dart';
 import 'package:banexy/models/word.dart';
-import 'package:banexy/screens/learning_session_screen.dart';
+import 'package:banexy/screens/sorting_screen.dart';
 
 void main() {
   final testWords = [
-    WordCard(id: '1', text: 'Apple', meaning: 'りんご', category: 'General'),
-    WordCard(id: '2', text: 'Code', meaning: 'コード', category: 'Technology'),
-    WordCard(id: '3', text: 'Meeting', meaning: '会議', category: 'Business'),
+    WordCard(id: '1', text: 'Apple', meaning: 'りんご', category: 'General', partOfSpeech: 'Noun'),
+    WordCard(id: '2', text: 'Code', meaning: 'コード', category: 'Technology', partOfSpeech: 'Noun'),
+    WordCard(id: '3', text: 'Meeting', meaning: '会議', category: 'Business', partOfSpeech: 'Noun'),
     WordCard(
       id: '4',
       text: 'Done',
       meaning: '完了',
       category: 'Technology',
+      partOfSpeech: 'Noun',
       status: WordStatus.mastered,
     ),
   ];
@@ -112,6 +113,7 @@ void main() {
         text: 'Flutter',
         meaning: 'フラッター',
         category: 'Technology',
+        partOfSpeech: 'Noun'
       ),
     ];
 
@@ -132,7 +134,7 @@ void main() {
     expect(find.text('General の学習対象単語がありません！'), findsOneWidget);
   });
 
-  testWidgets('Should navigate to LearningSessionScreen on success', (
+  testWidgets('Should navigate to SortingScreen on success', (
     WidgetTester tester,
   ) async {
     await setSurfaceSize(tester);
@@ -145,6 +147,6 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.byType(LearningSessionScreen), findsOneWidget);
+    expect(find.byType(SortingScreen), findsOneWidget);
   });
 }

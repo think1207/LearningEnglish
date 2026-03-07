@@ -5,15 +5,22 @@ import '../models/word.dart';
 class SwipeableCard extends StatefulWidget {
   final WordCard card;
   final bool isAnswerVisible;
+  final Color? answerColor; // テキストの色を受け取るパラメータ
   final VoidCallback onTap;
   final void Function(bool) onSwiped;
+  // 親（画面側）にドラッグ状態を伝えてヘッダーのハイライトを更新するためのコールバック
+  final void Function(Offset)? onDragUpdate;
+  final VoidCallback? onDragEnd;
 
   const SwipeableCard({
     super.key,
     required this.card,
     required this.isAnswerVisible,
+    this.answerColor,
     required this.onTap,
     required this.onSwiped,
+    this.onDragUpdate,
+    this.onDragEnd,
   });
 
   @override
@@ -43,22 +50,29 @@ class _SwipeableCardState extends State<SwipeableCard>
 
   void _onPanStart(DragStartDetails details) {
     _dragOffset = Offset.zero;
+    if (widget.onDragUpdate != null) widget.onDragUpdate!(_dragOffset);
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
     setState(() {
       _dragOffset += details.delta;
     });
+    if (widget.onDragUpdate != null) widget.onDragUpdate!(_dragOffset);
   }
 
   void _onPanEnd(DragEndDetails details) {
-    if (_dragOffset.dx.abs() > 100) {
-      // Trigger swipe completion
-      widget.onSwiped(_dragOffset.dx > 0);
+    if (widget.onDragEnd != null) widget.onDragEnd!();
+
+    final screenSize = MediaQuery.of(context).size;
+    if (_dragOffset.dx > screenSize.width * 0.3) {
+      widget.onSwiped(true);
+    } else if (_dragOffset.dx < -screenSize.width * 0.3) {
+      widget.onSwiped(false);
     } else {
-      // Animate back to center if not a valid swipe
+      // 閾値に満たない場合は元に戻すアニメーション
       _animation = Tween<Offset>(begin: _dragOffset, end: Offset.zero).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+        CurvedAnimation(
+            parent: _animationController, curve: Curves.easeOutBack),
       );
 
       _animationController.reset();
@@ -72,6 +86,8 @@ class _SwipeableCardState extends State<SwipeableCard>
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: widget.onTap,
       onPanStart: _onPanStart,
@@ -83,15 +99,28 @@ class _SwipeableCardState extends State<SwipeableCard>
           final offset = _animationController.isAnimating
               ? _animation.value
               : _dragOffset;
+
+          // ドラッグ量に応じて枠線の色を変化させる
+          Color borderColor = Colors.transparent;
+          if (offset.dx < -50) {
+            borderColor = const Color(0xFFD97061).withOpacity(0.5); // _dangerColor
+          } else if (offset.dx > 50) {
+            borderColor = const Color(0xFF8BA094).withOpacity(0.5); // _primaryColor
+          }
+
           return Transform.translate(
             offset: offset,
             child: Transform.rotate(
-              angle: offset.dx / (MediaQuery.of(context).size.width / 2) * 0.4,
-              child: child,
+              angle: offset.dx / screenSize.width * 0.5,
+              child: StaticCard(
+                card: widget.card,
+                isVisible: widget.isAnswerVisible,
+                borderColor: borderColor,
+                answerColor: widget.answerColor, // ここでStaticCardに色を渡す
+              ),
             ),
           );
         },
-        child: StaticCard(card: widget.card, isVisible: widget.isAnswerVisible),
       ),
     );
   }
@@ -100,90 +129,99 @@ class _SwipeableCardState extends State<SwipeableCard>
 class StaticCard extends StatelessWidget {
   final WordCard card;
   final bool isVisible;
+  final Color borderColor;
+  final Color? answerColor;
 
-  const StaticCard({super.key, required this.card, required this.isVisible});
+  const StaticCard({
+    super.key,
+    required this.card,
+    required this.isVisible,
+    this.borderColor = Colors.transparent,
+    this.answerColor,
+  });
 
   @override
   Widget build(BuildContext context) {
+    const Color dangerColor = Color(0xFFD97061);
+    const Color bgColor = Color(0xFFF4F5F6);
+    const Color textColorDark = Color(0xFF2C3E50);
+
     return Container(
-      width: 320,
-      height: 480,
-      padding: const EdgeInsets.all(24),
+      width: MediaQuery.of(context).size.width * 0.85,
+      height: 400,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: borderColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          ),
+          )
         ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  card.category,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                ),
-              ),
-              Row(
-                children: List.generate(
-                  3,
-                  (index) => Icon(
-                    index < card.proficiency ? Icons.star : Icons.star_border,
-                    color: Colors.amber,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
+          // 英単語
           Text(
-            card.text,
-            style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
+            card.text, // WordCardモデルのプロパティ
             textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-          AnimatedOpacity(
-            opacity: isVisible ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 300),
-            child: Column(
-              children: [
-                const Divider(height: 40),
-                Text(
-                  card.meaning,
-                  style: const TextStyle(fontSize: 24, color: Colors.black54),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: textColorDark,
             ),
           ),
-          const Spacer(),
-          if (!isVisible)
-            Text("タップしてめくる", style: TextStyle(color: Colors.grey.shade400))
-          else
+          const SizedBox(height: 16),
+
+          // 品詞チップ
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              card.partOfSpeech, // WordCardモデルのプロパティ
+              style: const TextStyle(color: Colors.black54, fontSize: 12),
+            ),
+          ),
+          const SizedBox(height: 40),
+
+          // 音声アイコン
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey.shade50,
+            ),
+            child: const Icon(Icons.volume_up, color: Colors.black45, size: 36),
+          ),
+          const SizedBox(height: 40),
+
+          // 答え または ヒント
+          if (isVisible) ...[
+            Text(
+              card.meaning, // WordCardモデルのプロパティ
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: answerColor ?? dangerColor, // 渡された色があればそれを適用
+              ),
+            ),
+          ] else ...[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("← 知らない", style: TextStyle(color: Colors.red.shade300)),
-                Text("知ってる →", style: TextStyle(color: Colors.green.shade300)),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.compare_arrows, color: Colors.black26, size: 20),
+                SizedBox(width: 8),
+                Text('左右にスワイプ', style: TextStyle(color: Colors.black38)),
               ],
-            ),
+            )
+          ]
         ],
       ),
     );

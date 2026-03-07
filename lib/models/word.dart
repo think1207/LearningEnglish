@@ -5,6 +5,7 @@ class WordCard {
   final String text;
   final String meaning;
   final String category;
+  final String partOfSpeech;
 
   WordStatus status;
   int proficiency;
@@ -14,6 +15,7 @@ class WordCard {
     required this.text,
     required this.meaning,
     required this.category,
+    required this.partOfSpeech,
     this.status = WordStatus.fresh,
     this.proficiency = 0,
   });
@@ -23,6 +25,7 @@ class WordCard {
     String? text,
     String? meaning,
     String? category,
+    String? partOfSpeech,
     WordStatus? status,
     int? proficiency,
   }) {
@@ -31,6 +34,7 @@ class WordCard {
       text: text ?? this.text,
       meaning: meaning ?? this.meaning,
       category: category ?? this.category,
+      partOfSpeech: partOfSpeech ?? this.partOfSpeech,
       status: status ?? this.status,
       proficiency: proficiency ?? this.proficiency,
     );
@@ -42,6 +46,7 @@ class WordCard {
       text: json['text'],
       meaning: json['meaning'],
       category: json['category'],
+      partOfSpeech: json['partOfSpeech'],
       status: WordStatus.values.firstWhere(
         (e) => e.toString() == json['status'],
         orElse: () => WordStatus.fresh,
@@ -56,6 +61,7 @@ class WordCard {
       'text': text,
       'meaning': meaning,
       'category': category,
+      'partOfSpeech': partOfSpeech,
       'status': status.toString(),
       'proficiency': proficiency,
     };

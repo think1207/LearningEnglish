@@ -15,6 +15,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
   final _textCtrl = TextEditingController();
   final _meaningCtrl = TextEditingController();
   final _categoryCtrl = TextEditingController();
+  final _partOfSpeechCtrl = TextEditingController();
 
   @override
   void dispose() {
@@ -31,6 +32,9 @@ class _AddWordScreenState extends State<AddWordScreen> {
         text: _textCtrl.text,
         meaning: _meaningCtrl.text,
         category: _categoryCtrl.text.isNotEmpty ? _categoryCtrl.text : 'User',
+        partOfSpeech: _partOfSpeechCtrl.text.isNotEmpty
+            ? _partOfSpeechCtrl.text
+            : 'Noun',
       );
 
       await LocalWordRepository().addWord(newWord);
