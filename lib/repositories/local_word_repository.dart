@@ -28,7 +28,7 @@ class LocalWordRepository implements BaseWordRepository {
       id: '3',
       text: 'Legacy',
       meaning: '遺産 / (IT)古いシステム',
-      category: 'IT',
+      category: 'Technology',
     ),
     WordCard(
       id: '4',
@@ -36,14 +36,24 @@ class LocalWordRepository implements BaseWordRepository {
       meaning: '利害関係者',
       category: 'Business',
     ),
-    WordCard(id: '5', text: 'Scalability', meaning: '拡張性', category: 'IT'),
-    WordCard(id: '6', text: 'Pivot', meaning: '方向転換', category: 'Startup'),
-    WordCard(id: '7', text: 'Disruptive', meaning: '破壊的な', category: 'Startup'),
+    WordCard(
+      id: '5',
+      text: 'Scalability',
+      meaning: '拡張性',
+      category: 'Technology',
+    ),
+    WordCard(id: '6', text: 'Pivot', meaning: '方向転換', category: 'Business'),
+    WordCard(
+      id: '7',
+      text: 'Disruptive',
+      meaning: '破壊的な',
+      category: 'Business',
+    ),
     WordCard(
       id: '8',
       text: 'Retention',
       meaning: '維持 / 保持率',
-      category: 'Marketing',
+      category: 'Business',
     ),
   ];
 

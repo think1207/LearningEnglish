@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:banexy/repositories/local_word_repository.dart';
 import 'package:banexy/screens/add_word_screen.dart';
-import 'package:banexy/screens/learning_session_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:banexy/screens/new_words_setup_screen.dart';
 
 import '../models/word.dart';
 
@@ -37,29 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
       });
     }
-  }
-
-  void _startSession() {
-    final candidates = _allWords.where((w) {
-      return w.status != WordStatus.mastered;
-    }).toList();
-
-    if (candidates.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('学習対象の単語がありません！')));
-      return;
-    }
-
-    candidates.shuffle();
-    final sessionQueue = candidates.take(10).toList();
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => LearningSessionScreen(initialQueue: sessionQueue),
-      ),
-    ).then((_) => _loadData());
   }
 
   @override
@@ -157,7 +134,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: 'New Words',
                   subtitle1: '前回：Technology',
                   subtitle2: '新しい単語を学ぶ',
-                  onTap: _startSession,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            NewWordsSetupScreen(allWords: _allWords),
+                      ),
+                    ).then((_) => _loadData());
+                  },
                 ),
                 const SizedBox(height: 16),
 
