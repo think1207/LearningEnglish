@@ -192,7 +192,11 @@ class StaticCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: Colors.grey.shade50,
               ),
-              child: const Icon(Icons.volume_up, color: Colors.black45, size: 36),
+              child: const Icon(
+                Icons.volume_up,
+                color: Colors.black45,
+                size: 36,
+              ),
             ),
             const SizedBox(height: 24),
 

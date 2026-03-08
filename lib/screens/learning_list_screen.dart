@@ -35,7 +35,10 @@ class _LearningListScreenState extends State<LearningListScreen> {
             AppHeader(
               title: "Today's New Words",
               subtitleWidget: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.background,
                   borderRadius: BorderRadius.circular(16),
@@ -43,7 +46,11 @@ class _LearningListScreenState extends State<LearningListScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.menu_book, size: 14, color: AppColors.textLight),
+                    const Icon(
+                      Icons.menu_book,
+                      size: 14,
+                      color: AppColors.textLight,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       '${widget.wordsToLearn.length} words to learn',

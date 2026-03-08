@@ -140,7 +140,9 @@ class _SortingScreenState extends State<SortingScreen> {
 
   Widget _buildProgressSection() {
     final processedCount = _initialCount - _currentQueue.length;
-    final progressValue = _initialCount > 0 ? processedCount / _initialCount : 1.0;
+    final progressValue = _initialCount > 0
+        ? processedCount / _initialCount
+        : 1.0;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -161,7 +163,10 @@ class _SortingScreenState extends State<SortingScreen> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white, // Figmaに合わせてチップの背景を白に
                       border: Border.all(color: Colors.grey.shade300),
@@ -169,7 +174,11 @@ class _SortingScreenState extends State<SortingScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.code, size: 14, color: AppColors.textDark),
+                        const Icon(
+                          Icons.code,
+                          size: 14,
+                          color: AppColors.textDark,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           widget.category,
@@ -181,7 +190,7 @@ class _SortingScreenState extends State<SortingScreen> {
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 16),

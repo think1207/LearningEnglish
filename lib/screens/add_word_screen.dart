@@ -57,10 +57,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: 'Add New Word',
-              subtitle: '新しい単語を辞書に追加',
-            ),
+            const AppHeader(title: 'Add New Word', subtitle: '新しい単語を辞書に追加'),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -80,8 +77,9 @@ class _AddWordScreenState extends State<AddWordScreen> {
                           ),
                           prefixIcon: Icon(Icons.abc),
                         ),
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Please enter a word' : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Please enter a word'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -96,8 +94,9 @@ class _AddWordScreenState extends State<AddWordScreen> {
                           ),
                           prefixIcon: Icon(Icons.translate),
                         ),
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Please enter a meaning' : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Please enter a meaning'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(

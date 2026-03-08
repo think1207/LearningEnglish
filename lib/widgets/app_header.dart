@@ -22,46 +22,45 @@ class AppHeader extends StatelessWidget {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.only(top: 8, bottom: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IconButton(
-              icon: Icon(leftIcon, color: AppColors.textDark),
-              onPressed: onLeftIconPressed ?? () => Navigator.pop(context),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconButton(
+            icon: Icon(leftIcon, color: AppColors.textDark),
+            onPressed: onLeftIconPressed ?? () => Navigator.pop(context),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.textDark,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (subtitleWidget != null) ...[
+                  const SizedBox(height: 12),
+                  subtitleWidget!,
+                ] else if (subtitle != null && subtitle!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
                   Text(
-                    title,
+                    subtitle!,
                     style: const TextStyle(
-                      color: AppColors.textDark,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      color: AppColors.textLight,
+                      fontSize: 12,
                     ),
                   ),
-                  if (subtitleWidget != null) ...[
-                    const SizedBox(height: 12),
-                    subtitleWidget!,
-                  ]
-                  else if (subtitle != null && subtitle!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle!,
-                      style: const TextStyle(
-                        color: AppColors.textLight,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
                 ],
-              ),
+              ],
             ),
-            const SizedBox(width: 48),
-          ],
-        ),
+          ),
+          const SizedBox(width: 48),
+        ],
+      ),
     );
   }
 }

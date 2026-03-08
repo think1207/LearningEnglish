@@ -43,7 +43,11 @@ class SortCompleteScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                           color: AppColors.primary,
                         ),
-                        child: const Icon(Icons.check, size: 60, color: Colors.white),
+                        child: const Icon(
+                          Icons.check,
+                          size: 60,
+                          color: Colors.white,
+                        ),
                       ),
                       const SizedBox(height: 32),
                       const Text(
@@ -98,7 +102,9 @@ class SortCompleteScreen extends StatelessWidget {
                                 runSpacing: 12,
                                 alignment: WrapAlignment.center,
                                 children: [
-                                  ...displayWords.map((w) => _buildWordChip(w.text)),
+                                  ...displayWords.map(
+                                    (w) => _buildWordChip(w.text),
+                                  ),
                                   if (remainingCount > 0)
                                     _buildWordChip('+$remainingCount'),
                                 ],
@@ -151,7 +157,10 @@ class SortCompleteScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          child: const Text('Later', style: TextStyle(fontSize: 16)),
+                          child: const Text(
+                            'Later',
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ),
                     ],

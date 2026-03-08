@@ -58,10 +58,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(
-              title: 'New Words',
-              subtitle: '学習モードと今日の目標を選択',
-            ),
+            const AppHeader(title: 'New Words', subtitle: '学習モードと今日の目標を選択'),
 
             Expanded(
               child: SingleChildScrollView(
