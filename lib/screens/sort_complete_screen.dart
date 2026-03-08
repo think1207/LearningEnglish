@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/word.dart';
+import '../theme/app_colors.dart';
 
 class SortCompleteScreen extends StatelessWidget {
   final List<WordCard> retryList;
@@ -9,10 +10,6 @@ class SortCompleteScreen extends StatelessWidget {
     required this.retryList,
   });
 
-  static const Color _primaryColor = Color(0xFF8BA094);
-  static const Color _bgColor = Color(0xFFF4F5F6);
-  static const Color _textColorDark = Color(0xFF2C3E50);
-
   @override
   Widget build(BuildContext context) {
     final retryCount = retryList.length;
@@ -21,12 +18,12 @@ class SortCompleteScreen extends StatelessWidget {
     final remainingCount = retryCount - displayWords.length;
 
     return Scaffold(
-      backgroundColor: _bgColor,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: _textColorDark),
+          icon: const Icon(Icons.close, color: AppColors.textDark),
           // ×ボタンでホームに戻る
           onPressed: () => Navigator.pop(context),
         ),
@@ -36,7 +33,7 @@ class SortCompleteScreen extends StatelessWidget {
             Text(
               'Sort Complete',
               style: TextStyle(
-                color: _textColorDark,
+                color: AppColors.textDark,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -64,7 +61,7 @@ class SortCompleteScreen extends StatelessWidget {
                   height: 100,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _primaryColor,
+                    color: AppColors.primary,
                   ),
                   child: const Icon(Icons.check, size: 60, color: Colors.white),
                 ),
@@ -75,7 +72,7 @@ class SortCompleteScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: _textColorDark,
+                    color: AppColors.textDark,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -99,7 +96,7 @@ class SortCompleteScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
+                        color: Colors.black.withValues(alpha: 0.02),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       )
@@ -146,7 +143,7 @@ class SortCompleteScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _primaryColor,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -168,7 +165,7 @@ class SortCompleteScreen extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: _textColorDark,
+                      foregroundColor: AppColors.textDark,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -191,13 +188,13 @@ class SortCompleteScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: _bgColor,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
         style: const TextStyle(
-          color: _textColorDark,
+          color: AppColors.textDark,
           fontSize: 13,
           fontWeight: FontWeight.w500,
         ),

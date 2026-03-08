@@ -4,6 +4,7 @@ import '../models/word.dart';
 import '../repositories/local_word_repository.dart';
 import '../widgets/word_card.dart';
 import 'sort_complete_screen.dart';
+import '../theme/app_colors.dart';
 
 class SwipeHistory {
   final WordCard card;
@@ -37,11 +38,6 @@ class _SortingScreenState extends State<SortingScreen> {
 
   Offset _dragOffset = Offset.zero;
   bool _isDragging = false;
-
-  static const Color _primaryColor = Color(0xFF8BA094);
-  static const Color _dangerColor = Color(0xFFD97061);
-  static const Color _bgColor = Color(0xFFF4F5F6);
-  static const Color _textColorDark = Color(0xFF2C3E50);
 
   @override
   void initState() {
@@ -122,21 +118,21 @@ class _SortingScreenState extends State<SortingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bgColor,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: _textColorDark),
+          icon: const Icon(Icons.close, color: AppColors.textDark),
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
-        title: Column(
-          children: const [
+        title: const Column(
+          children: [
             Text(
               'Sort',
               style: TextStyle(
-                color: _textColorDark,
+                color: AppColors.textDark,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -145,7 +141,7 @@ class _SortingScreenState extends State<SortingScreen> {
             Text(
               '学習する単語を仕分け',
               style: TextStyle(
-                color: Colors.black54,
+                color: AppColors.textLight,
                 fontSize: 12,
               ),
             ),
@@ -181,7 +177,7 @@ class _SortingScreenState extends State<SortingScreen> {
                 "Today's Unknown: $processedCount/$_initialCount",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black54,
+                  color: AppColors.textLight,
                   fontSize: 13,
                 ),
               ),
@@ -193,11 +189,11 @@ class _SortingScreenState extends State<SortingScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.code, size: 14, color: Colors.black54),
+                    const Icon(Icons.code, size: 14, color: AppColors.textLight),
                     const SizedBox(width: 4),
                     Text(
                       widget.category,
-                      style: const TextStyle(fontSize: 12, color: Colors.black54),
+                      style: const TextStyle(fontSize: 12, color: AppColors.textLight),
                     ),
                   ],
                 ),
@@ -208,7 +204,7 @@ class _SortingScreenState extends State<SortingScreen> {
           LinearProgressIndicator(
             value: progressValue,
             backgroundColor: Colors.grey.shade200,
-            color: _primaryColor,
+            color: AppColors.primary,
             minHeight: 6,
             borderRadius: BorderRadius.circular(3),
           ),
@@ -237,17 +233,17 @@ class _SortingScreenState extends State<SortingScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: _dangerColor.withOpacity(leftOpacity),
+              color: AppColors.danger.withValues(alpha: leftOpacity),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
-                Icon(Icons.cancel_outlined, color: leftOpacity > 0 ? _dangerColor : Colors.black26, size: 18),
+                Icon(Icons.cancel_outlined, color: leftOpacity > 0 ? AppColors.danger : Colors.black26, size: 18),
                 const SizedBox(width: 4),
                 Text(
                   "Don't know",
                   style: TextStyle(
-                    color: leftOpacity > 0 ? _dangerColor : Colors.black26,
+                    color: leftOpacity > 0 ? AppColors.danger : Colors.black26,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -258,7 +254,7 @@ class _SortingScreenState extends State<SortingScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: _primaryColor.withOpacity(rightOpacity),
+              color: AppColors.primary.withValues(alpha: rightOpacity),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -266,13 +262,13 @@ class _SortingScreenState extends State<SortingScreen> {
                 Text(
                   "Know",
                   style: TextStyle(
-                    color: rightOpacity > 0 ? _primaryColor : Colors.black26,
+                    color: rightOpacity > 0 ? AppColors.primary : Colors.black26,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(width: 4),
-                Icon(Icons.check_circle_outline, color: rightOpacity > 0 ? _primaryColor : Colors.black26, size: 18),
+                Icon(Icons.check_circle_outline, color: rightOpacity > 0 ? AppColors.primary : Colors.black26, size: 18),
               ],
             ),
           )
@@ -287,12 +283,12 @@ class _SortingScreenState extends State<SortingScreen> {
     final topCardData = _currentQueue.first;
     final secondCardData = _currentQueue.length > 1 ? _currentQueue[1] : null;
 
-    Color currentAnswerColor = Colors.black87;
+    Color currentAnswerColor = AppColors.textDark;
     if (_isDragging) {
       if (_dragOffset.dx > 0) {
-        currentAnswerColor = _primaryColor;
+        currentAnswerColor = AppColors.primary;
       } else if (_dragOffset.dx < 0) {
-        currentAnswerColor = _dangerColor;
+        currentAnswerColor = AppColors.danger;
       }
     }
 
@@ -357,12 +353,12 @@ class _SortingScreenState extends State<SortingScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.undo, color: _history.isEmpty ? Colors.black26 : _textColorDark),
+            Icon(Icons.undo, color: _history.isEmpty ? Colors.black26 : AppColors.textDark),
             const SizedBox(width: 8),
             Text(
               'Undo',
               style: TextStyle(
-                color: _history.isEmpty ? Colors.black26 : _textColorDark,
+                color: _history.isEmpty ? Colors.black26 : AppColors.textDark,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

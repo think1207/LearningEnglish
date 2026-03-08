@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:banexy/theme/app_colors.dart';
 
 import './screens/home_screen.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF0F2F5),
+        scaffoldBackgroundColor: AppColors.background,
         cardTheme: CardThemeData(
           elevation: 4,
           shape: RoundedRectangleBorder(

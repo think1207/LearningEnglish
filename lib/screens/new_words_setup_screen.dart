@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/word.dart';
 import 'sorting_screen.dart';
+import '../theme/app_colors.dart';
 
 class NewWordsSetupScreen extends StatefulWidget {
   final List<WordCard> allWords;
@@ -13,11 +14,6 @@ class NewWordsSetupScreen extends StatefulWidget {
 }
 
 class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
-  static const Color _primaryColor = Color(0xFF8BA094);
-  static const Color _bgColor = Color(0xFFF4F5F6);
-  static const Color _textColorDark = Color(0xFF2C3E50);
-  static const Color _textColorLight = Color(0xFF7F8C8D);
-
   String _selectedCategory = 'Technology';
   int _targetCount = 10;
   bool _saveAsDefault = false;
@@ -57,7 +53,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bgColor,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -71,7 +67,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                       IconButton(
                         icon: const Icon(
                           Icons.arrow_back,
-                          color: _textColorDark,
+                          color: AppColors.textDark,
                         ),
                         onPressed: () => Navigator.pop(context),
                       ),
@@ -82,7 +78,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: _textColorDark,
+                            color: AppColors.textDark,
                           ),
                         ),
                       ),
@@ -92,7 +88,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                   const SizedBox(height: 16),
                   const Text(
                     '学習モードと今日の目標を選択',
-                    style: TextStyle(color: _textColorLight, fontSize: 14),
+                    style: TextStyle(color: AppColors.textLight, fontSize: 14),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -108,7 +104,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                     const Text(
                       'SELECT MODE',
                       style: TextStyle(
-                        color: _textColorLight,
+                        color: AppColors.textLight,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -136,7 +132,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                     const Text(
                       "TODAY'S NEW TARGET",
                       style: TextStyle(
-                        color: _textColorLight,
+                        color: AppColors.textLight,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -158,7 +154,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                 child: ElevatedButton(
                   onPressed: _startSorting,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _primaryColor,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -194,12 +190,12 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? _primaryColor : Colors.transparent,
+            color: isSelected ? AppColors.primary : Colors.transparent,
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -210,12 +206,12 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? _primaryColor.withOpacity(0.1) : _bgColor,
+                color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.background,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: isSelected ? _primaryColor : _textColorDark,
+                color: isSelected ? AppColors.primary : AppColors.textDark,
               ),
             ),
             const SizedBox(width: 16),
@@ -228,21 +224,21 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: _textColorDark,
+                      color: AppColors.textDark,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: _textColorLight,
+                      color: AppColors.textLight,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: _primaryColor, size: 28)
+              const Icon(Icons.check_circle, color: AppColors.primary, size: 28)
             else
               Container(
                 width: 24,
@@ -266,7 +262,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -284,10 +280,10 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _bgColor,
+                    color: AppColors.background,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.remove, color: _textColorDark),
+                  child: const Icon(Icons.remove, color: AppColors.textDark),
                 ),
               ),
               Column(
@@ -297,12 +293,12 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                     style: const TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: _textColorDark,
+                      color: AppColors.textDark,
                     ),
                   ),
                   const Text(
                     'words',
-                    style: TextStyle(color: _textColorLight, fontSize: 14),
+                    style: TextStyle(color: AppColors.textLight, fontSize: 14),
                   ),
                 ],
               ),
@@ -313,7 +309,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: const BoxDecoration(
-                    color: _primaryColor,
+                    color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.add, color: Colors.white),
@@ -338,12 +334,12 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
             children: [
               const Text(
                 'Save as default',
-                style: TextStyle(color: _textColorLight, fontSize: 16),
+                style: TextStyle(color: AppColors.textLight, fontSize: 16),
               ),
               Switch(
                 value: _saveAsDefault,
                 onChanged: (val) => setState(() => _saveAsDefault = val),
-                activeColor: _primaryColor,
+                activeColor: AppColors.primary,
               ),
             ],
           ),
@@ -361,17 +357,17 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
         height: 48,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : _bgColor,
+          color: isSelected ? Colors.white : AppColors.background,
           shape: BoxShape.circle,
           border: Border.all(
-            color: isSelected ? _primaryColor : Colors.transparent,
+            color: isSelected ? AppColors.primary : Colors.transparent,
             width: 1.5,
           ),
         ),
         child: Text(
           '$value',
           style: TextStyle(
-            color: isSelected ? _primaryColor : _textColorDark,
+            color: isSelected ? AppColors.primary : AppColors.textDark,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 16,
           ),
