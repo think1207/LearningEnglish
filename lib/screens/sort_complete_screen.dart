@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/word.dart';
 import '../theme/app_colors.dart';
+import 'learning_list_screen.dart';
 
 class SortCompleteScreen extends StatelessWidget {
   final List<WordCard> retryList;
@@ -21,7 +22,6 @@ class SortCompleteScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: AppColors.textDark),
-          // ×ボタンでホームに戻る
           onPressed: () => Navigator.pop(context),
         ),
         centerTitle: true,
@@ -134,9 +134,11 @@ class SortCompleteScreen extends StatelessWidget {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: ここに実際の学習セッション画面への遷移を追加する
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('学習画面へ遷移します（今後実装）')),
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LearningListScreen(wordsToLearn: retryList),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(

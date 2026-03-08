@@ -341,7 +341,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
               Switch(
                 value: _saveAsDefault,
                 onChanged: (val) => setState(() => _saveAsDefault = val),
-                activeColor: AppColors.primary,
+                activeThumbColor: AppColors.primary,
               ),
             ],
           ),
