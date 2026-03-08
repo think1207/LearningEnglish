@@ -7,6 +7,10 @@ class WordCard {
   final String category;
   final String partOfSpeech;
 
+  final String example;
+  final String exampleTranslation;
+  final List<String> synonyms;
+
   WordStatus status;
   int proficiency;
 
@@ -16,6 +20,9 @@ class WordCard {
     required this.meaning,
     required this.category,
     required this.partOfSpeech,
+    this.example = '',
+    this.exampleTranslation = '',
+    this.synonyms = const [],
     this.status = WordStatus.fresh,
     this.proficiency = 0,
   });
@@ -26,6 +33,9 @@ class WordCard {
     String? meaning,
     String? category,
     String? partOfSpeech,
+    String? example,
+    String? exampleTranslation,
+    List<String>? synonyms,
     WordStatus? status,
     int? proficiency,
   }) {
@@ -35,6 +45,9 @@ class WordCard {
       meaning: meaning ?? this.meaning,
       category: category ?? this.category,
       partOfSpeech: partOfSpeech ?? this.partOfSpeech,
+      example: example ?? this.example,
+      exampleTranslation: exampleTranslation ?? this.exampleTranslation,
+      synonyms: synonyms ?? this.synonyms,
       status: status ?? this.status,
       proficiency: proficiency ?? this.proficiency,
     );
@@ -47,6 +60,9 @@ class WordCard {
       meaning: json['meaning'],
       category: json['category'],
       partOfSpeech: json['partOfSpeech'],
+      example: json['example'] ?? '',
+      exampleTranslation: json['exampleTranslation'] ?? '',
+      synonyms: List<String>.from(json['synonyms'] ?? []),
       status: WordStatus.values.firstWhere(
         (e) => e.toString() == json['status'],
         orElse: () => WordStatus.fresh,
@@ -62,6 +78,9 @@ class WordCard {
       'meaning': meaning,
       'category': category,
       'partOfSpeech': partOfSpeech,
+      'example': example,
+      'exampleTranslation': exampleTranslation,
+      'synonyms': synonyms,
       'status': status.toString(),
       'proficiency': proficiency,
     };

@@ -81,15 +81,17 @@ class LocalWordRepository implements BaseWordRepository {
     String? jsonString = prefs.getString(_storageKey);
 
     if (jsonString == null) {
-      return List.from(_masterData);
+      return List<WordCard>.from(_masterData);
     }
 
     try {
-      List<dynamic> decoded = jsonDecode(jsonString);
-      return decoded.map((e) => WordCard.fromJson(e)).toList();
+      final List<dynamic> decoded = jsonDecode(jsonString);
+      return decoded
+          .map((e) => WordCard.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       print("Error loading data: $e");
-      return List.from(_masterData);
+      return List<WordCard>.from(_masterData);
     }
   }
 

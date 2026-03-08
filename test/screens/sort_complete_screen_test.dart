@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:banexy/models/word.dart';
 import 'package:banexy/screens/sort_complete_screen.dart';
+import 'package:banexy/screens/learning_list_screen.dart';
 
 void main() {
   final testWords = List.generate(
@@ -46,17 +47,19 @@ void main() {
     expect(find.text('Later'), findsOneWidget);
   });
 
-  testWidgets('SortCompleteScreen shows all chips when 5 or fewer words', (
+  testWidgets('Start Learning button navigates to LearningListScreen', (
     WidgetTester tester,
   ) async {
-    final fewWords = testWords.take(3).toList();
-    await tester.pumpWidget(createTestWidget(fewWords));
+    await tester.pumpWidget(createTestWidget(testWords));
 
-    expect(find.textContaining('3個の新しい単語を選びました'), findsOneWidget);
-    expect(find.text('Word 0'), findsOneWidget);
-    expect(find.text('Word 1'), findsOneWidget);
-    expect(find.text('Word 2'), findsOneWidget);
-    expect(find.textContaining('+'), findsNothing);
+    // Start Learning ボタンをタップ
+    await tester.tap(find.text('Start Learning'));
+    await tester.pumpAndSettle();
+
+    // LearningListScreen に遷移したことを確認
+    expect(find.byType(LearningListScreen), findsOneWidget);
+    expect(find.text("Today's New Words"), findsOneWidget);
+    expect(find.text('7 words to learn'), findsOneWidget);
   });
 
   testWidgets('SortCompleteScreen pops when clicking close icon', (
