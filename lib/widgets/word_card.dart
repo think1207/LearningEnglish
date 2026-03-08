@@ -157,66 +157,71 @@ class StaticCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 英単語
-          Text(
-            card.text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 品詞チップ
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              card.partOfSpeech,
-              style: const TextStyle(color: Colors.black54, fontSize: 12),
-            ),
-          ),
-          const SizedBox(height: 40),
-
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey.shade50,
-            ),
-            child: const Icon(Icons.volume_up, color: Colors.black45, size: 36),
-          ),
-          const SizedBox(height: 40),
-
-          if (isVisible) ...[
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Text(
-              card.meaning,
+              card.text,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
+              style: const TextStyle(
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: answerColor ?? AppColors.danger,
+                color: AppColors.textDark,
               ),
             ),
-          ] else ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.compare_arrows, color: Colors.black26, size: 20),
-                SizedBox(width: 8),
-                Text('左右にスワイプ', style: TextStyle(color: Colors.black38)),
-              ],
+            const SizedBox(height: 8),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                card.partOfSpeech,
+                style: const TextStyle(color: Colors.black54, fontSize: 12),
+              ),
             ),
+            const SizedBox(height: 24),
+
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey.shade50,
+              ),
+              child: const Icon(
+                Icons.volume_up,
+                color: Colors.black45,
+                size: 36,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            if (isVisible) ...[
+              Text(
+                card.meaning,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: answerColor ?? AppColors.danger,
+                ),
+              ),
+            ] else ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.compare_arrows, color: Colors.black26, size: 20),
+                  SizedBox(width: 8),
+                  Text('左右にスワイプ', style: TextStyle(color: Colors.black38)),
+                ],
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

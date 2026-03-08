@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:banexy/repositories/local_word_repository.dart';
 import 'package:banexy/theme/app_colors.dart';
+import '../widgets/app_header.dart';
 
 import '../models/word.dart';
 
@@ -52,59 +53,95 @@ class _AddWordScreenState extends State<AddWordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Word')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _textCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'English Word / Phrase',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.abc),
-                ),
-                validator: (v) =>
-                    v == null || v.isEmpty ? 'Please enter a word' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _meaningCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Meaning (Japanese)',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.translate),
-                ),
-                validator: (v) =>
-                    v == null || v.isEmpty ? 'Please enter a meaning' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _categoryCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Category (Optional)',
-                  hintText: 'e.g., My List, Work, etc...',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.category),
-                ),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _save,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const AppHeader(title: 'Add New Word', subtitle: '新しい単語を辞書に追加'),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _textCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'English Word / Phrase',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: Icon(Icons.abc),
+                        ),
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Please enter a word'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _meaningCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Meaning (Japanese)',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: Icon(Icons.translate),
+                        ),
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Please enter a meaning'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _categoryCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Category (Optional)',
+                          hintText: 'e.g., My List, Work, etc...',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: Icon(Icons.category),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: _save,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            'Save Word',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: const Text('Save Word'),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

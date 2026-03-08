@@ -45,7 +45,6 @@ void main() {
     await tester.pumpWidget(createLearningListScreen());
 
     // 最初は意味や例文が表示されていないことを確認（isExpandedがfalseの状態）
-    // 注意: スクリーン実装上、expandedでない時は意味が表示されない
     expect(find.text('俊敏な / アジャイル開発'), findsNothing);
     expect(find.text('Example'), findsNothing);
 
@@ -105,6 +104,8 @@ void main() {
 
     expect(find.byType(LearningListScreen), findsOneWidget);
 
+    // AppHeaderの戻るボタンをタップ
+    // デフォルトは Icons.arrow_back
     await tester.tap(find.byIcon(Icons.arrow_back));
     await tester.pumpAndSettle();
 

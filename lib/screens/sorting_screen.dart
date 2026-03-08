@@ -5,6 +5,7 @@ import '../repositories/local_word_repository.dart';
 import '../widgets/word_card.dart';
 import 'sort_complete_screen.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_header.dart';
 
 class SwipeHistory {
   final WordCard card;
@@ -119,36 +120,15 @@ class _SortingScreenState extends State<SortingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: AppColors.textDark),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: const Column(
-          children: [
-            Text(
-              'Sort',
-              style: TextStyle(
-                color: AppColors.textDark,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 2),
-            Text(
-              '学習する単語を仕分け',
-              style: TextStyle(color: AppColors.textLight, fontSize: 12),
-            ),
-          ],
-        ),
-      ),
       body: SafeArea(
         child: Column(
           children: [
-            _buildProgressHeader(),
+            AppHeader(
+              title: 'Sort',
+              subtitle: '学習する単語を仕分け',
+              leftIcon: Icons.close,
+            ),
+            _buildProgressSection(),
             _buildSwipeHints(),
             Expanded(child: _buildCardStack()),
             _buildUndoButton(),
@@ -158,67 +138,78 @@ class _SortingScreenState extends State<SortingScreen> {
     );
   }
 
-  Widget _buildProgressHeader() {
+  Widget _buildProgressSection() {
     final processedCount = _initialCount - _currentQueue.length;
     final progressValue = _initialCount > 0
         ? processedCount / _initialCount
         : 1.0;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+          child: Column(
             children: [
-              Text(
-                "Today's Unknown: $processedCount/$_initialCount",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textLight,
-                  fontSize: 13,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.code,
-                      size: 14,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Today's Unknown: $processedCount/$_initialCount",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                       color: AppColors.textLight,
+                      fontSize: 14,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      widget.category,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textLight,
-                      ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
                     ),
-                  ],
+                    decoration: BoxDecoration(
+                      color: Colors.white, // Figmaに合わせてチップの背景を白に
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.code,
+                          size: 14,
+                          color: AppColors.textDark,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.category,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textDark,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Figmaのような丸みのあるプログレスバー
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progressValue,
+                  backgroundColor: Colors.grey.shade300,
+                  color: AppColors.primary,
+                  minHeight: 8,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: progressValue,
-            backgroundColor: Colors.grey.shade200,
-            color: AppColors.primary,
-            minHeight: 6,
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ],
-      ),
+        ),
+        // プログレスバーのすぐ下に入る横幅いっぱいの区切り線
+        const Divider(height: 1, thickness: 1, color: Color(0xFFE5E7EB)),
+      ],
     );
   }
 

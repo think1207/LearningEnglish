@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/word.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_header.dart';
 
 class LearningListScreen extends StatefulWidget {
   final List<WordCard> wordsToLearn;
@@ -28,59 +29,41 @@ class _LearningListScreenState extends State<LearningListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
-        title: const Text(
-          "Today's New Words",
-          style: TextStyle(
-            color: AppColors.textDark,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Container(
+            AppHeader(
+              title: "Today's New Words",
+              subtitleWidget: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+                  horizontal: 12,
+                  vertical: 6,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.background,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
                       Icons.menu_book,
-                      size: 16,
+                      size: 14,
                       color: AppColors.textLight,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Text(
                       '${widget.wordsToLearn.length} words to learn',
                       style: const TextStyle(
                         color: AppColors.textLight,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-
             Expanded(
               child: ListView.separated(
                 itemCount: widget.wordsToLearn.length,

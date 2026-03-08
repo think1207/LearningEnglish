@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/word.dart';
 import 'sorting_screen.dart';
 import '../theme/app_colors.dart';
+import '../widgets/app_header.dart';
 
 class NewWordsSetupScreen extends StatefulWidget {
   final List<WordCard> allWords;
@@ -57,43 +58,7 @@ class _NewWordsSetupScreenState extends State<NewWordsSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: AppColors.textDark,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const Expanded(
-                        child: Text(
-                          'New Words',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textDark,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    '学習モードと今日の目標を選択',
-                    style: TextStyle(color: AppColors.textLight, fontSize: 14),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
+            const AppHeader(title: 'New Words', subtitle: '学習モードと今日の目標を選択'),
 
             Expanded(
               child: SingleChildScrollView(

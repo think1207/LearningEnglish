@@ -41,7 +41,6 @@ void main() {
     return MaterialApp(home: NewWordsSetupScreen(allWords: words ?? testWords));
   }
 
-  // テストの画面サイズを大きく設定するユーティリティ
   Future<void> setSurfaceSize(WidgetTester tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 1200));
   }
@@ -54,6 +53,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('New Words'), findsOneWidget);
+    // AppHeaderのsubtitle
+    expect(find.text('学習モードと今日の目標を選択'), findsOneWidget);
     expect(find.text('Technology'), findsWidgets);
     expect(find.text('10'), findsNWidgets(2));
   });
@@ -85,7 +86,6 @@ void main() {
     await tester.tap(addButton);
     await tester.pumpAndSettle();
 
-    // 成功すれば、中央の大きな数字とチップの「15」の2つが見つかるはず
     expect(find.text('15'), findsNWidgets(2));
   });
 
@@ -101,7 +101,6 @@ void main() {
     await tester.tap(removeButton);
     await tester.pumpAndSettle();
 
-    // 10 -> 5
     expect(find.text('5'), findsNWidgets(2));
   });
 
@@ -112,7 +111,6 @@ void main() {
     await tester.pumpWidget(createTestWidget());
     await tester.pumpAndSettle();
 
-    // 20 のチップをタップ
     final chip20 = find.text('20');
     await tester.ensureVisible(chip20);
     await tester.tap(chip20);
@@ -145,7 +143,6 @@ void main() {
     await tester.ensureVisible(startButton);
     await tester.tap(startButton);
 
-    // スナックバーのアニメーション待機
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 

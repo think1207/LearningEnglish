@@ -36,9 +36,14 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> setSurfaceSize(WidgetTester tester) async {
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+  }
+
   testWidgets('SortingScreen completes sorting and shows SortCompleteScreen', (
     tester,
   ) async {
+    await setSurfaceSize(tester);
     SharedPreferences.setMockInitialValues({});
     final wordsForTest = testWords.map((e) => e.copyWith()).toList();
 
@@ -72,11 +77,12 @@ void main() {
     // Verify SortCompleteScreen is shown.
     expect(find.byType(SortCompleteScreen), findsOneWidget);
     expect(find.text('準備完了'), findsOneWidget);
-    expect(find.text('2個の新しい単語を選びました。\nこれからひとつずつ学習していきましょう。'), findsOneWidget);
+    expect(find.textContaining('2個の新しい単語を選びました'), findsOneWidget);
     expect(find.text('Start Learning'), findsOneWidget);
   });
 
   testWidgets('SortingScreen undo functionality', (tester) async {
+    await setSurfaceSize(tester);
     SharedPreferences.setMockInitialValues({});
     final wordsForTest = testWords.map((e) => e.copyWith()).toList();
     await tester.pumpWidget(

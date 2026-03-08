@@ -20,13 +20,20 @@ void main() {
     return MaterialApp(home: SortCompleteScreen(retryList: retryList));
   }
 
+  Future<void> setSurfaceSize(WidgetTester tester) async {
+    await tester.binding.setSurfaceSize(const Size(800, 1200));
+  }
+
   testWidgets('SortCompleteScreen displays correct count and limited chips', (
     WidgetTester tester,
   ) async {
+    await setSurfaceSize(tester);
     await tester.pumpWidget(createTestWidget(testWords));
 
-    // タイトルの確認
-    expect(find.text('準備完了'), findsOneWidget);
+    // AppHeaderのタイトルの確認
+    expect(find.text('Sort Complete'), findsOneWidget);
+    // サブタイトルの確認
+    expect(find.text('仕分け完了'), findsOneWidget);
 
     // 個数の確認 (7個)
     expect(find.textContaining('7個の新しい単語を選びました'), findsOneWidget);
@@ -50,6 +57,7 @@ void main() {
   testWidgets('Start Learning button navigates to LearningListScreen', (
     WidgetTester tester,
   ) async {
+    await setSurfaceSize(tester);
     await tester.pumpWidget(createTestWidget(testWords));
 
     // Start Learning ボタンをタップ
@@ -59,12 +67,14 @@ void main() {
     // LearningListScreen に遷移したことを確認
     expect(find.byType(LearningListScreen), findsOneWidget);
     expect(find.text("Today's New Words"), findsOneWidget);
+    // AppHeader内のsubtitleWidgetに含まれるテキストを確認
     expect(find.text('7 words to learn'), findsOneWidget);
   });
 
   testWidgets('SortCompleteScreen pops when clicking close icon', (
     WidgetTester tester,
   ) async {
+    await setSurfaceSize(tester);
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
@@ -85,7 +95,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SortCompleteScreen), findsOneWidget);
 
-    // AppBarの閉じるボタンをタップ
+    // AppHeader内の閉じるボタンをタップ
     await tester.tap(find.byIcon(Icons.close));
     await tester.pumpAndSettle();
 
@@ -95,6 +105,7 @@ void main() {
   testWidgets('SortCompleteScreen pops when clicking Later button', (
     WidgetTester tester,
   ) async {
+    await setSurfaceSize(tester);
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
