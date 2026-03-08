@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:banexy/repositories/local_word_repository.dart';
+import 'package:banexy/theme/app_colors.dart';
 
 import '../models/word.dart';
 
@@ -96,7 +97,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
                   onPressed: _save,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    backgroundColor: Colors.pinkAccent,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                   ),
                   child: const Text('Save Word'),

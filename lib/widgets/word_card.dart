@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../models/word.dart';
+import '../theme/app_colors.dart';
 
 class SwipeableCard extends StatefulWidget {
   final WordCard card;
   final bool isAnswerVisible;
-  final Color? answerColor; // テキストの色を受け取るパラメータ
+  final Color? answerColor;
   final VoidCallback onTap;
   final void Function(bool) onSwiped;
-  // 親（画面側）にドラッグ状態を伝えてヘッダーのハイライトを更新するためのコールバック
   final void Function(Offset)? onDragUpdate;
   final VoidCallback? onDragEnd;
 
@@ -69,7 +69,6 @@ class _SwipeableCardState extends State<SwipeableCard>
     } else if (_dragOffset.dx < -screenSize.width * 0.3) {
       widget.onSwiped(false);
     } else {
-      // 閾値に満たない場合は元に戻すアニメーション
       _animation = Tween<Offset>(begin: _dragOffset, end: Offset.zero).animate(
         CurvedAnimation(
           parent: _animationController,
@@ -102,16 +101,11 @@ class _SwipeableCardState extends State<SwipeableCard>
               ? _animation.value
               : _dragOffset;
 
-          // ドラッグ量に応じて枠線の色を変化させる
           Color borderColor = Colors.transparent;
           if (offset.dx < -50) {
-            borderColor = const Color(
-              0xFFD97061,
-            ).withOpacity(0.5); // _dangerColor
+            borderColor = AppColors.danger.withValues(alpha: 0.5);
           } else if (offset.dx > 50) {
-            borderColor = const Color(
-              0xFF8BA094,
-            ).withOpacity(0.5); // _primaryColor
+            borderColor = AppColors.primary.withValues(alpha: 0.5);
           }
 
           return Transform.translate(
@@ -122,7 +116,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                 card: widget.card,
                 isVisible: widget.isAnswerVisible,
                 borderColor: borderColor,
-                answerColor: widget.answerColor, // ここでStaticCardに色を渡す
+                answerColor: widget.answerColor,
               ),
             ),
           );
@@ -148,10 +142,6 @@ class StaticCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color dangerColor = Color(0xFFD97061);
-    const Color bgColor = Color(0xFFF4F5F6);
-    const Color textColorDark = Color(0xFF2C3E50);
-
     return Container(
       width: MediaQuery.of(context).size.width * 0.85,
       height: 400,
@@ -161,7 +151,7 @@ class StaticCard extends StatelessWidget {
         border: Border.all(color: borderColor, width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -172,12 +162,12 @@ class StaticCard extends StatelessWidget {
         children: [
           // 英単語
           Text(
-            card.text, // WordCardモデルのプロパティ
+            card.text,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: textColorDark,
+              color: AppColors.textDark,
             ),
           ),
           const SizedBox(height: 16),
@@ -186,17 +176,16 @@ class StaticCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: bgColor,
+              color: AppColors.background,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              card.partOfSpeech, // WordCardモデルのプロパティ
+              card.partOfSpeech,
               style: const TextStyle(color: Colors.black54, fontSize: 12),
             ),
           ),
           const SizedBox(height: 40),
 
-          // 音声アイコン
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -207,15 +196,14 @@ class StaticCard extends StatelessWidget {
           ),
           const SizedBox(height: 40),
 
-          // 答え または ヒント
           if (isVisible) ...[
             Text(
-              card.meaning, // WordCardモデルのプロパティ
+              card.meaning,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: answerColor ?? dangerColor, // 渡された色があればそれを適用
+                color: answerColor ?? AppColors.danger,
               ),
             ),
           ] else ...[

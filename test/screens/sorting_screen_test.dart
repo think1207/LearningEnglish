@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:banexy/models/word.dart';
 import 'package:banexy/screens/sorting_screen.dart';
+import 'package:banexy/screens/sort_complete_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -35,7 +36,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('SortingScreen shows cards and completes session', (
+  testWidgets('SortingScreen completes sorting and shows SortCompleteScreen', (
     tester,
   ) async {
     SharedPreferences.setMockInitialValues({});
@@ -51,29 +52,31 @@ void main() {
 
     expect(find.byKey(const ValueKey('1')), findsOneWidget);
 
-    // Swipe the first card right.
-    // Use a larger offset to exceed 30% of screen width (standard test width is 800)
+    // Swipe the first card left (Don't know -> add to retry/learning list).
     await swipeCard(
       tester,
       find.byKey(const ValueKey('1')),
-      const Offset(400, 0),
+      const Offset(-400, 0),
     );
 
     // Verify the second card is now the active card.
     expect(find.byKey(const ValueKey('2')), findsOneWidget);
 
-    // Swipe the second card right.
+    // Swipe the second card left.
     await swipeCard(
       tester,
       find.byKey(const ValueKey('2')),
-      const Offset(400, 0),
+      const Offset(-400, 0),
     );
 
-    // Verify the completion screen is shown.
-    expect(find.text('本日の学習終了！'), findsOneWidget);
+    // Verify SortCompleteScreen is shown.
+    expect(find.byType(SortCompleteScreen), findsOneWidget);
+    expect(find.text('準備完了'), findsOneWidget);
+    expect(find.text('2個の新しい単語を選びました。\nこれからひとつずつ学習していきましょう。'), findsOneWidget);
+    expect(find.text('Start Learning'), findsOneWidget);
   });
 
-  testWidgets('SortingScreen goes to review phase', (tester) async {
+  testWidgets('SortingScreen undo functionality', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final wordsForTest = testWords.map((e) => e.copyWith()).toList();
     await tester.pumpWidget(
@@ -86,42 +89,22 @@ void main() {
 
     expect(find.byKey(const ValueKey('1')), findsOneWidget);
 
-    // Swipe left to mark for review.
+    // Swipe the first card left.
     await swipeCard(
       tester,
       find.byKey(const ValueKey('1')),
       const Offset(-400, 0),
     );
 
-    // Verify the second card is now active.
+    // Now Word 2 should be on top.
     expect(find.byKey(const ValueKey('2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('1')), findsNothing);
 
-    // Swipe the second card right.
-    await swipeCard(
-      tester,
-      find.byKey(const ValueKey('2')),
-      const Offset(400, 0),
-    );
-
-    // Verify the review ready screen is shown.
-    expect(find.text('復習の準備ができました'), findsOneWidget);
-    expect(find.text('苦手な 1語を復習します'), findsOneWidget);
-
-    // Start the review.
-    await tester.tap(find.text('スタート'));
+    // Tap Undo.
+    await tester.tap(find.text('Undo'));
     await tester.pumpAndSettle();
 
-    // Verify the card for review is shown again.
+    // Word 1 should be back on top.
     expect(find.byKey(const ValueKey('1')), findsOneWidget);
-
-    // Swipe the card right to master it.
-    await swipeCard(
-      tester,
-      find.byKey(const ValueKey('1')),
-      const Offset(400, 0),
-    );
-
-    // Verify the completion screen is shown.
-    expect(find.text('本日の学習終了！'), findsOneWidget);
   });
 }

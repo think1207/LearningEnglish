@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:banexy/repositories/local_word_repository.dart';
 import 'package:banexy/screens/add_word_screen.dart';
 import 'package:banexy/screens/new_words_setup_screen.dart';
+import 'package:banexy/theme/app_colors.dart';
 
 import '../models/word.dart';
 
@@ -16,11 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final LocalWordRepository _repo = LocalWordRepository();
   List<WordCard> _allWords = [];
   bool _isLoading = true;
-
-  static const Color _headerColor = Color(0xFF8BA094);
-  static const Color _bgColor = Color(0xFFF4F5F6);
-  static const Color _textColorDark = Color(0xFF2C3E50);
-  static const Color _textColorLight = Color(0xFF7F8C8D);
 
   @override
   void initState() {
@@ -53,12 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final learningCount = 18;
 
     return Scaffold(
-      backgroundColor: _bgColor,
+      backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Container(
-              color: _headerColor,
+              color: AppColors.primary,
               padding: const EdgeInsets.only(
                 top: 72,
                 left: 24,
@@ -170,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Text(
                   'YOUR PROGRESS',
                   style: TextStyle(
-                    color: _textColorLight,
+                    color: AppColors.textLight,
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                     letterSpacing: 0.5,
@@ -184,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: _buildProgressCard(
                         count: masteredCount.toString(),
                         label: 'Mastered',
-                        countColor: _textColorDark,
+                        countColor: AppColors.textDark,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -192,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: _buildProgressCard(
                         count: weakCount.toString(),
                         label: 'Weak',
-                        countColor: const Color(0xFFC7715D),
+                        countColor: AppColors.accent,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -200,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: _buildProgressCard(
                         count: learningCount.toString(),
                         label: 'Learning',
-                        countColor: const Color(0xFF658671),
+                        countColor: AppColors.secondary,
                       ),
                     ),
                   ],
@@ -219,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (_) => const AddWordScreen()),
           ).then((_) => _loadData());
         },
-        backgroundColor: _headerColor,
+        backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -258,10 +254,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _bgColor,
+                      color: AppColors.background,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, color: _textColorLight),
+                    child: Icon(icon, color: AppColors.textLight),
                   ),
                   const SizedBox(width: 16),
                 ],
@@ -277,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: _textColorDark,
+                              color: AppColors.textDark,
                             ),
                           ),
 
@@ -289,13 +285,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFBECEB),
+                                color: AppColors.dangerLight,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 badgeText,
                                 style: const TextStyle(
-                                  color: Color(0xFFC7715D),
+                                  color: AppColors.accent,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),
@@ -308,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         subtitle1,
                         style: const TextStyle(
-                          color: _textColorLight,
+                          color: AppColors.textLight,
                           fontSize: 14,
                         ),
                       ),
@@ -317,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           subtitle2,
                           style: const TextStyle(
-                            color: _textColorLight,
+                            color: AppColors.textLight,
                             fontSize: 14,
                           ),
                         ),
@@ -368,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             label,
             style: const TextStyle(
-              color: _textColorDark,
+              color: AppColors.textDark,
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/word.dart';
 import '../repositories/local_word_repository.dart';
 import '../widgets/word_card.dart';
-
-enum SessionPhase { sorting, reviewReady, review, completed }
+import 'sort_complete_screen.dart';
+import '../theme/app_colors.dart';
 
 class SwipeHistory {
   final WordCard card;
@@ -34,16 +34,10 @@ class _SortingScreenState extends State<SortingScreen> {
   final List<SwipeHistory> _history = [];
 
   int _initialCount = 0;
-  SessionPhase _phase = SessionPhase.sorting;
   bool _isAnswerVisible = false;
 
   Offset _dragOffset = Offset.zero;
   bool _isDragging = false;
-
-  static const Color _primaryColor = Color(0xFF8BA094);
-  static const Color _dangerColor = Color(0xFFD97061);
-  static const Color _bgColor = Color(0xFFF4F5F6);
-  static const Color _textColorDark = Color(0xFF2C3E50);
 
   @override
   void initState() {
@@ -68,7 +62,6 @@ class _SortingScreenState extends State<SortingScreen> {
     final currentCard = _currentQueue.first;
 
     setState(() {
-      // 履歴に保存
       _history.add(SwipeHistory(currentCard, isRight));
 
       if (isRight) {
@@ -91,13 +84,12 @@ class _SortingScreenState extends State<SortingScreen> {
       _saveProgress(currentCard);
 
       if (_currentQueue.isEmpty) {
-        if (_phase == SessionPhase.sorting || _phase == SessionPhase.review) {
-          if (_retryList.isNotEmpty) {
-            _phase = SessionPhase.reviewReady;
-          } else {
-            _phase = SessionPhase.completed;
-          }
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SortCompleteScreen(retryList: _retryList),
+          ),
+        );
       }
     });
   }
@@ -115,8 +107,6 @@ class _SortingScreenState extends State<SortingScreen> {
         _retryList.removeWhere((w) => w.id == card.id);
       }
 
-      // プログレスを元に戻す（簡易的にステータスを戻す）
-      // ※厳密なproficiencyの巻き戻しが必要な場合は調整してください
       card.status = WordStatus.learning;
       _saveProgress(card);
 
@@ -125,92 +115,47 @@ class _SortingScreenState extends State<SortingScreen> {
     });
   }
 
-  void _startReview() {
-    setState(() {
-      _phase = SessionPhase.review;
-      _currentQueue = List.from(_retryList);
-      _initialCount = _retryList.length;
-      _currentQueue.shuffle();
-      _retryList.clear();
-      _history.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bgColor,
-      appBar: _buildAppBar(),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: AppColors.textDark),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: const Column(
+          children: [
+            Text(
+              'Sort',
+              style: TextStyle(
+                color: AppColors.textDark,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 2),
+            Text(
+              '学習する単語を仕分け',
+              style: TextStyle(color: AppColors.textLight, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            if (_phase == SessionPhase.sorting ||
-                _phase == SessionPhase.review) ...[
-              _buildProgressHeader(),
-              _buildSwipeHints(),
-            ],
-            Expanded(child: _buildBodyContent()),
-            if (_phase == SessionPhase.sorting || _phase == SessionPhase.review)
-              _buildUndoButton(),
+            _buildProgressHeader(),
+            _buildSwipeHints(),
+            Expanded(child: _buildCardStack()),
+            _buildUndoButton(),
           ],
         ),
       ),
     );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.close, color: _textColorDark),
-        onPressed: () => Navigator.pop(context),
-      ),
-      centerTitle: true,
-      title: Column(
-        children: [
-          Text(
-            _getAppBarTitle(),
-            style: const TextStyle(
-              color: _textColorDark,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            _getAppBarSubtitle(),
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getAppBarTitle() {
-    switch (_phase) {
-      case SessionPhase.sorting:
-        return 'Sort';
-      case SessionPhase.reviewReady:
-        return 'Ready';
-      case SessionPhase.review:
-        return 'Review';
-      case SessionPhase.completed:
-        return 'Completed';
-    }
-  }
-
-  String _getAppBarSubtitle() {
-    switch (_phase) {
-      case SessionPhase.sorting:
-        return '学習する単語を仕分け';
-      case SessionPhase.reviewReady:
-        return '復習の準備ができました';
-      case SessionPhase.review:
-        return '苦手な単語を復習';
-      case SessionPhase.completed:
-        return 'お疲れ様でした！';
-    }
   }
 
   Widget _buildProgressHeader() {
@@ -231,7 +176,7 @@ class _SortingScreenState extends State<SortingScreen> {
                 "Today's Unknown: $processedCount/$_initialCount",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black54,
+                  color: AppColors.textLight,
                   fontSize: 13,
                 ),
               ),
@@ -246,13 +191,17 @@ class _SortingScreenState extends State<SortingScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.code, size: 14, color: Colors.black54),
+                    const Icon(
+                      Icons.code,
+                      size: 14,
+                      color: AppColors.textLight,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       widget.category,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Colors.black54,
+                        color: AppColors.textLight,
                       ),
                     ),
                   ],
@@ -264,7 +213,7 @@ class _SortingScreenState extends State<SortingScreen> {
           LinearProgressIndicator(
             value: progressValue,
             backgroundColor: Colors.grey.shade200,
-            color: _primaryColor,
+            color: AppColors.primary,
             minHeight: 6,
             borderRadius: BorderRadius.circular(3),
           ),
@@ -290,25 +239,24 @@ class _SortingScreenState extends State<SortingScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Don't know
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: _dangerColor.withOpacity(leftOpacity),
+              color: AppColors.danger.withValues(alpha: leftOpacity),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.cancel_outlined,
-                  color: leftOpacity > 0 ? _dangerColor : Colors.black26,
+                  color: leftOpacity > 0 ? AppColors.danger : Colors.black26,
                   size: 18,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   "Don't know",
                   style: TextStyle(
-                    color: leftOpacity > 0 ? _dangerColor : Colors.black26,
+                    color: leftOpacity > 0 ? AppColors.danger : Colors.black26,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -316,11 +264,10 @@ class _SortingScreenState extends State<SortingScreen> {
               ],
             ),
           ),
-          // Know
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: _primaryColor.withOpacity(rightOpacity),
+              color: AppColors.primary.withValues(alpha: rightOpacity),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -328,7 +275,9 @@ class _SortingScreenState extends State<SortingScreen> {
                 Text(
                   "Know",
                   style: TextStyle(
-                    color: rightOpacity > 0 ? _primaryColor : Colors.black26,
+                    color: rightOpacity > 0
+                        ? AppColors.primary
+                        : Colors.black26,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -336,7 +285,7 @@ class _SortingScreenState extends State<SortingScreen> {
                 const SizedBox(width: 4),
                 Icon(
                   Icons.check_circle_outline,
-                  color: rightOpacity > 0 ? _primaryColor : Colors.black26,
+                  color: rightOpacity > 0 ? AppColors.primary : Colors.black26,
                   size: 18,
                 ),
               ],
@@ -347,30 +296,18 @@ class _SortingScreenState extends State<SortingScreen> {
     );
   }
 
-  Widget _buildBodyContent() {
-    switch (_phase) {
-      case SessionPhase.sorting:
-      case SessionPhase.review:
-        return _buildCardStack();
-      case SessionPhase.reviewReady:
-        return _buildReviewReadyScreen();
-      case SessionPhase.completed:
-        return _buildCompletedScreen();
-    }
-  }
-
   Widget _buildCardStack() {
     if (_currentQueue.isEmpty) return const Center(child: Text("Loading..."));
 
     final topCardData = _currentQueue.first;
     final secondCardData = _currentQueue.length > 1 ? _currentQueue[1] : null;
 
-    Color currentAnswerColor = Colors.black87;
+    Color currentAnswerColor = AppColors.textDark;
     if (_isDragging) {
       if (_dragOffset.dx > 0) {
-        currentAnswerColor = _primaryColor;
+        currentAnswerColor = AppColors.primary;
       } else if (_dragOffset.dx < 0) {
-        currentAnswerColor = _dangerColor;
+        currentAnswerColor = AppColors.danger;
       }
     }
 
@@ -378,7 +315,6 @@ class _SortingScreenState extends State<SortingScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // 後ろのカード（ダミー）
           if (secondCardData != null)
             Transform.scale(
               scale: 0.95,
@@ -440,79 +376,19 @@ class _SortingScreenState extends State<SortingScreen> {
           children: [
             Icon(
               Icons.undo,
-              color: _history.isEmpty ? Colors.black26 : _textColorDark,
+              color: _history.isEmpty ? Colors.black26 : AppColors.textDark,
             ),
             const SizedBox(width: 8),
             Text(
               'Undo',
               style: TextStyle(
-                color: _history.isEmpty ? Colors.black26 : _textColorDark,
+                color: _history.isEmpty ? Colors.black26 : AppColors.textDark,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildReviewReadyScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.repeat, size: 80, color: _dangerColor),
-          const SizedBox(height: 20),
-          Text(
-            "苦手な ${_retryList.length}語を復習します",
-            style: const TextStyle(fontSize: 18, color: _textColorDark),
-          ),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            onPressed: _startReview,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _dangerColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: const Text("スタート", style: TextStyle(fontSize: 18)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCompletedScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.check_circle, size: 80, color: _primaryColor),
-          const SizedBox(height: 24),
-          const Text(
-            "本日の学習終了！",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: _textColorDark,
-            ),
-          ),
-          const SizedBox(height: 40),
-          OutlinedButton(
-            onPressed: () => Navigator.pop(context),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: const Text("ホームに戻る", style: TextStyle(fontSize: 16)),
-          ),
-        ],
       ),
     );
   }
