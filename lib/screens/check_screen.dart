@@ -68,7 +68,8 @@ class _CheckScreenState extends State<CheckScreen> {
       }
 
       if (normalizedInput.length >= 2 && target.length >= 2) {
-        if (target.contains(normalizedInput) || normalizedInput.contains(target)) {
+        if (target.contains(normalizedInput) ||
+            normalizedInput.contains(target)) {
           isAlmost = true;
         }
       }
@@ -88,7 +89,10 @@ class _CheckScreenState extends State<CheckScreen> {
     if (_textController.text.trim().isEmpty) return;
 
     final currentWord = widget.wordsToCheck[_currentIndex];
-    final result = _checkAnswerLogic(_textController.text, currentWord.meanings);
+    final result = _checkAnswerLogic(
+      _textController.text,
+      currentWord.meanings,
+    );
 
     setState(() {
       _isAnswered = true;
@@ -108,7 +112,10 @@ class _CheckScreenState extends State<CheckScreen> {
         _currentIndex++;
         _isAnswered = false;
         _textController.clear();
-        Future.delayed(const Duration(milliseconds: 100), () => _focusNode.requestFocus());
+        Future.delayed(
+          const Duration(milliseconds: 100),
+          () => _focusNode.requestFocus(),
+        );
       } else {
         // --- 全問終了した場合 ---
         // TODO: 全問終了用の ResultScreen ができたら、以下のように pushReplacement で遷移させるのがベストです。
@@ -176,20 +183,34 @@ class _CheckScreenState extends State<CheckScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Progress', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                      const Text(
+                        'Progress',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
                       Text(
                         '${_currentIndex + 1}/$totalCount',
-                        style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text('Weak flagged', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                      const Text(
+                        'Weak flagged',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
                       Text(
                         '$_weakCount',
-                        style: const TextStyle(color: Color(0xFFE89A8F), fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Color(0xFFE89A8F),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -222,14 +243,22 @@ class _CheckScreenState extends State<CheckScreen> {
                           ),
                           const SizedBox(height: 16),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.background,
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
-                              currentWord.partOfSpeech.isEmpty ? 'noun' : currentWord.partOfSpeech,
-                              style: const TextStyle(color: AppColors.textLight, fontSize: 14),
+                              currentWord.partOfSpeech.isEmpty
+                                  ? 'noun'
+                                  : currentWord.partOfSpeech,
+                              style: const TextStyle(
+                                color: AppColors.textLight,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 32),
@@ -239,13 +268,17 @@ class _CheckScreenState extends State<CheckScreen> {
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: _isAnswered && _lastResult == AnswerResult.incorrect
+                                color:
+                                    _isAnswered &&
+                                        _lastResult == AnswerResult.incorrect
                                     ? const Color(0xFFFDECEB)
                                     : AppColors.background,
                               ),
                               child: Icon(
                                 Icons.volume_up,
-                                color: _isAnswered && _lastResult == AnswerResult.incorrect
+                                color:
+                                    _isAnswered &&
+                                        _lastResult == AnswerResult.incorrect
                                     ? cardRed
                                     : AppColors.textLight,
                                 size: 28,
@@ -267,12 +300,18 @@ class _CheckScreenState extends State<CheckScreen> {
                           controller: _textController,
                           focusNode: _focusNode,
                           autofocus: true,
-                          style: const TextStyle(fontSize: 16, color: AppColors.textDark),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.textDark,
+                          ),
                           decoration: const InputDecoration(
                             hintText: '日本語の意味を入力',
                             hintStyle: TextStyle(color: Colors.black38),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
                           ),
                           onSubmitted: (_) => _onCheckPressed(),
                         ),
@@ -286,13 +325,25 @@ class _CheckScreenState extends State<CheckScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.textDark,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
-                          child: const Text('Check', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Check',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 32),
-                      const Icon(Icons.lightbulb, color: Colors.white70, size: 20),
+                      const Icon(
+                        Icons.lightbulb,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
                       const SizedBox(height: 8),
                       const Text(
                         'Type the Japanese meaning',
@@ -303,7 +354,9 @@ class _CheckScreenState extends State<CheckScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 32),
                         decoration: BoxDecoration(
-                          color: _lastResult == AnswerResult.incorrect ? cardRed : cardGreen,
+                          color: _lastResult == AnswerResult.incorrect
+                              ? cardRed
+                              : cardGreen,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -315,8 +368,12 @@ class _CheckScreenState extends State<CheckScreen> {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                _lastResult == AnswerResult.incorrect ? Icons.close : Icons.check,
-                                color: _lastResult == AnswerResult.incorrect ? cardRed : cardGreen,
+                                _lastResult == AnswerResult.incorrect
+                                    ? Icons.close
+                                    : Icons.check,
+                                color: _lastResult == AnswerResult.incorrect
+                                    ? cardRed
+                                    : cardGreen,
                                 size: 40,
                               ),
                             ),
@@ -324,8 +381,14 @@ class _CheckScreenState extends State<CheckScreen> {
                             Text(
                               _lastResult == AnswerResult.incorrect
                                   ? 'Repeat'
-                                  : (_lastResult == AnswerResult.almost ? 'Nice! (惜しい)' : 'Nice!'),
-                              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                                  : (_lastResult == AnswerResult.almost
+                                        ? 'Nice! (惜しい)'
+                                        : 'Nice!'),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -342,22 +405,40 @@ class _CheckScreenState extends State<CheckScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Your answer:', style: TextStyle(color: AppColors.textDark, fontSize: 12)),
+                            const Text(
+                              'Your answer:',
+                              style: TextStyle(
+                                color: AppColors.textDark,
+                                fontSize: 12,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               _textController.text,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: _lastResult == AnswerResult.incorrect ? cardRed : AppColors.textDark,
+                                color: _lastResult == AnswerResult.incorrect
+                                    ? cardRed
+                                    : AppColors.textDark,
                               ),
                             ),
                             const SizedBox(height: 16),
-                            const Text('Correct meaning:', style: TextStyle(color: AppColors.textDark, fontSize: 12)),
+                            const Text(
+                              'Correct meaning:',
+                              style: TextStyle(
+                                color: AppColors.textDark,
+                                fontSize: 12,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               currentWord.meanings.join('、'),
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: cardGreen),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: cardGreen,
+                              ),
                             ),
                           ],
                         ),
@@ -370,16 +451,27 @@ class _CheckScreenState extends State<CheckScreen> {
                         child: ElevatedButton(
                           onPressed: _onNextPressed,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _lastResult == AnswerResult.incorrect ? cardRed : cardGreen,
+                            backgroundColor:
+                                _lastResult == AnswerResult.incorrect
+                                ? cardRed
+                                : cardGreen,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                             elevation: 0,
                           ),
-                          child: const Text('Next', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Next',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 32),
-                    ]
+                    ],
                   ],
                 ),
               ),

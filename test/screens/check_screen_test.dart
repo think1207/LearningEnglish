@@ -22,16 +22,16 @@ void main() {
   ];
 
   Widget createCheckScreen(List<WordCard> words) {
-    return MaterialApp(
-      home: CheckScreen(wordsToCheck: words),
-    );
+    return MaterialApp(home: CheckScreen(wordsToCheck: words));
   }
 
   Future<void> setSurfaceSize(WidgetTester tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 1200));
   }
 
-  testWidgets('CheckScreen displays the first word', (WidgetTester tester) async {
+  testWidgets('CheckScreen displays the first word', (
+    WidgetTester tester,
+  ) async {
     await setSurfaceSize(tester);
     await tester.pumpWidget(createCheckScreen(testWords));
 
@@ -41,7 +41,9 @@ void main() {
     expect(find.byType(TextField), findsOneWidget);
   });
 
-  testWidgets('CheckScreen handles a correct answer', (WidgetTester tester) async {
+  testWidgets('CheckScreen handles a correct answer', (
+    WidgetTester tester,
+  ) async {
     await setSurfaceSize(tester);
     await tester.pumpWidget(createCheckScreen(testWords));
 
@@ -56,7 +58,9 @@ void main() {
     expect(find.text('Next'), findsOneWidget);
   });
 
-  testWidgets('CheckScreen handles an "almost" correct answer', (WidgetTester tester) async {
+  testWidgets('CheckScreen handles an "almost" correct answer', (
+    WidgetTester tester,
+  ) async {
     await setSurfaceSize(tester);
     await tester.pumpWidget(createCheckScreen(testWords));
 
@@ -68,7 +72,9 @@ void main() {
     expect(find.text('Nice! (惜しい)'), findsOneWidget);
   });
 
-  testWidgets('CheckScreen handles an incorrect answer', (WidgetTester tester) async {
+  testWidgets('CheckScreen handles an incorrect answer', (
+    WidgetTester tester,
+  ) async {
     await setSurfaceSize(tester);
     await tester.pumpWidget(createCheckScreen(testWords));
 
@@ -82,7 +88,9 @@ void main() {
     expect(find.text('1'), findsOneWidget);
   });
 
-  testWidgets('CheckScreen navigates to the next word and then exits', (WidgetTester tester) async {
+  testWidgets('CheckScreen navigates to the next word and then exits', (
+    WidgetTester tester,
+  ) async {
     await setSurfaceSize(tester);
     await tester.pumpWidget(
       MaterialApp(
@@ -90,7 +98,9 @@ void main() {
           builder: (context) => ElevatedButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => CheckScreen(wordsToCheck: [testWords[0]])),
+              MaterialPageRoute(
+                builder: (_) => CheckScreen(wordsToCheck: [testWords[0]]),
+              ),
             ),
             child: const Text('Go'),
           ),
@@ -115,7 +125,9 @@ void main() {
     expect(find.byType(CheckScreen), findsNothing);
   });
 
-  testWidgets('CheckScreen close button pops the screen', (WidgetTester tester) async {
+  testWidgets('CheckScreen close button pops the screen', (
+    WidgetTester tester,
+  ) async {
     await setSurfaceSize(tester);
     await tester.pumpWidget(
       MaterialApp(
@@ -123,7 +135,9 @@ void main() {
           builder: (context) => ElevatedButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => CheckScreen(wordsToCheck: testWords)),
+              MaterialPageRoute(
+                builder: (_) => CheckScreen(wordsToCheck: testWords),
+              ),
             ),
             child: const Text('Go'),
           ),

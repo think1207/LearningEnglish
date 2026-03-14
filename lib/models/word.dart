@@ -79,7 +79,7 @@ class WordCard {
       exampleTranslation: json['exampleTranslation'] ?? '',
       synonyms: List<String>.from(json['synonyms'] ?? []),
       status: WordStatus.values.firstWhere(
-            (e) => e.toString() == json['status'],
+        (e) => e.toString() == json['status'],
         orElse: () => WordStatus.fresh,
       ),
       proficiency: json['proficiency'] ?? 0,

@@ -89,7 +89,8 @@ class _LearningListScreenState extends State<LearningListScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => CheckScreen(wordsToCheck: widget.wordsToLearn),
+                        builder: (_) =>
+                            CheckScreen(wordsToCheck: widget.wordsToLearn),
                       ),
                     );
                   },
