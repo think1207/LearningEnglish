@@ -4,12 +4,27 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'analysis_options.yaml'
+      - 'android/**'
+      - 'ios/**'
+      - 'linux/**'
+      - 'macos/**'
+      - 'web/**'
+      - 'windows/**'
+      - '.github/workflows/ci.yaml'
 
 jobs:
   test_and_format:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -40,5 +55,166 @@ jobs:
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
 
-      - name: Run tests
-        run: flutter test
+      - name: Run tests (machine output)
+        id: tests
+        continue-on-error: true
+        run: |
+          set +e
+          set -o pipefail
+          flutter test --machine | tee test-results.jsonl
+          test_exit=${PIPESTATUS[0]}
+          set -e
+          echo "exit_code=${test_exit}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Build test result comment body
+        if: always()
+        run: |
+          set +e
+          python3 - <<'PY'
+          import json
+          from collections import Counter
+          from pathlib import Path
+
+          marker = "<!-- ci-test-results -->"
+          source = Path("test-results.jsonl")
+          output = Path("test-results-comment.md")
+
+          tests = {}
+          raw_results = []
+
+          if source.exists():
+            for line in source.read_bytes().decode("utf-8", errors="replace").splitlines():
+              line = line.strip()
+              if not line:
+                continue
+              try:
+                event = json.loads(line)
+              except json.JSONDecodeError:
+                continue
+              if not isinstance(event, dict):
+                continue
+
+              event_type = event.get("type")
+              if event_type == "testStart":
+                test = event.get("test", {})
+                if not isinstance(test, dict):
+                  continue
+                test_id = test.get("id")
+                test_name = (test.get("name") or "").strip()
+                if test_id is None or not test_name:
+                  continue
+                if test.get("hidden", False):
+                  continue
+                tests[test_id] = test_name
+              elif event_type == "testDone":
+                test_id = event.get("testID")
+                test_name = tests.get(test_id)
+                if not test_name:
+                  continue
+                raw_results.append((test_name, event.get("result", "unknown")))
+
+          # Keep the latest result per test name to avoid duplicates.
+          latest = {}
+          for name, result in raw_results:
+            latest[name] = result
+          results = list(latest.items())
+
+          counts = Counter(result for _, result in results)
+          total = len(results)
+
+          label = {
+            "success": "✅ Success",
+            "failure": "❌ Failure",
+            "error": "💥 Error",
+            "skipped": "⏭️ Skipped",
+            "unknown": "❓ Unknown",
+          }
+
+          lines = [
+            marker,
+            "### 🧪 CI Test Results",
+            "",
+            "| Result | Count |",
+            "| --- | ---: |",
+            f"| ✅ Success | {counts.get('success', 0)} |",
+            f"| ❌ Failure | {counts.get('failure', 0)} |",
+            f"| 💥 Error | {counts.get('error', 0)} |",
+            f"| ⏭️ Skipped | {counts.get('skipped', 0)} |",
+            f"| **Total** | **{total}** |",
+            "",
+          ]
+
+          if results:
+            lines.append(f"<details><summary>テスト結果一覧 ({total}件)</summary>")
+            lines.append("")
+            lines.append("| Result | Test |")
+            lines.append("| --- | --- |")
+            for name in sorted(latest):
+              result = latest[name]
+              safe_name = name.replace("|", "\\|")
+              lines.append(f"| {label.get(result, '❓ Unknown')} | `{safe_name}` |")
+            lines.append("")
+            lines.append("</details>")
+          else:
+            lines.append("_テスト結果を取得できませんでした。ジョブログを確認してください。_")
+
+          output.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+          script_exit=$?
+          if [ "$script_exit" -ne 0 ]; then
+            printf '%s\n' \
+              '<!-- ci-test-results -->' \
+              '### 🧪 CI Test Results' \
+              '' \
+              '_テスト結果コメントの生成に失敗しました。ジョブログを確認してください。_' \
+              > test-results-comment.md
+          fi
+          exit 0
+
+      - name: Upsert PR comment with test results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- ci-test-results -->';
+            const fallbackBody = `${marker}\n### 🧪 CI Test Results\n\n_テスト結果コメントの生成に失敗しました。ジョブログを確認してください。_`;
+            const body = fs.existsSync('test-results-comment.md')
+              ? fs.readFileSync('test-results-comment.md', 'utf8')
+              : fallbackBody;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100
+            });
+
+            const existing = comments.find((comment) =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+            }
+
+      - name: Fail when tests fail
+        if: always() && steps.tests.outputs.exit_code != '0'
+        run: |
+          echo "Tests failed."
+          exit 1
