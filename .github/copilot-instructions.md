@@ -82,7 +82,7 @@ HomeScreen → NewWordsSetupScreen → SortingScreen → SortCompleteScreen → 
 
 ## 6. アプリ固有のドメインロジック
 
-* 解答チェック (CheckScreen): 入力された解答と単語の正解（meanings）との照合には、レーベンシュタイン距離（Levenshtein distance）を使用し、距離が「2以下」であれば「ほぼ正解 (almost correct)」とするファジーマッチングを行います。
+* 解答チェック (CheckScreen): 入力と正解（meanings）は、完全一致で correct、部分一致（入力長・対象長ともに2以上で contains が双方向のいずれか）で almost と判定します。さらにレーベンシュタイン距離（Levenshtein distance）を用い、対象語長が4以下なら距離==1、4より長い場合のみ距離<=2を almost とします。
 * スワイプの閾値 (SortingScreen): スワイプのアクションは、画面幅の30%（screenSize.width * 0.3）を超えた時点でトリガーされます。
 * 習熟度（Proficiency）の進行:
   * 右スワイプ: proficiency を加算。3に達するとステータスを mastered に変更。
