@@ -70,6 +70,7 @@ jobs:
       - name: Build test result comment body
         if: always()
         run: |
+          set +e
           python3 - <<'PY'
           import json
           from collections import Counter
@@ -151,6 +152,16 @@ jobs:
 
           output.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
+          script_exit=$?
+          if [ "$script_exit" -ne 0 ]; then
+            printf '%s\n' \
+              '<!-- ci-test-results -->' \
+              '### 🧪 CI Test Results' \
+              '' \
+              '_テスト結果コメントの生成に失敗しました。ジョブログを確認してください。_' \
+              > test-results-comment.md
+          fi
+          exit 0
 
       - name: Upsert PR comment with test results
         if: always()
@@ -159,7 +170,10 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = '<!-- ci-test-results -->';
-            const body = fs.readFileSync('test-results-comment.md', 'utf8');
+            const fallbackBody = `${marker}\n### 🧪 CI Test Results\n\n_テスト結果コメントの生成に失敗しました。ジョブログを確認してください。_`;
+            const body = fs.existsSync('test-results-comment.md')
+              ? fs.readFileSync('test-results-comment.md', 'utf8')
+              : fallbackBody;
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
 
