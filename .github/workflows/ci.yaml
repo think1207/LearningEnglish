@@ -84,7 +84,7 @@ jobs:
           raw_results = []
 
           if source.exists():
-            for line in source.read_text(encoding="utf-8").splitlines():
+            for line in source.read_bytes().decode("utf-8", errors="replace").splitlines():
               line = line.strip()
               if not line:
                 continue
@@ -92,10 +92,14 @@ jobs:
                 event = json.loads(line)
               except json.JSONDecodeError:
                 continue
+              if not isinstance(event, dict):
+                continue
 
               event_type = event.get("type")
               if event_type == "testStart":
                 test = event.get("test", {})
+                if not isinstance(test, dict):
+                  continue
                 test_id = test.get("id")
                 test_name = (test.get("name") or "").strip()
                 if test_id is None or not test_name:
@@ -119,34 +123,35 @@ jobs:
           counts = Counter(result for _, result in results)
           total = len(results)
 
-          icon = {
-            "success": "✅",
-            "failure": "❌",
-            "error": "💥",
-            "skipped": "⏭️",
-            "unknown": "❓",
+          label = {
+            "success": "✅ Success",
+            "failure": "❌ Failure",
+            "error": "💥 Error",
+            "skipped": "⏭️ Skipped",
+            "unknown": "❓ Unknown",
           }
 
           lines = [
             marker,
             "### 🧪 CI Test Results",
             "",
-            f"- Total: **{total}**",
-            f"- Success: **{counts.get('success', 0)}**",
-            f"- Failure: **{counts.get('failure', 0)}**",
-            f"- Error: **{counts.get('error', 0)}**",
-            f"- Skipped: **{counts.get('skipped', 0)}**",
+            "| Result | Count |",
+            "| --- | ---: |",
+            f"| ✅ Success | {counts.get('success', 0)} |",
+            f"| ❌ Failure | {counts.get('failure', 0)} |",
+            f"| 💥 Error | {counts.get('error', 0)} |",
+            f"| ⏭️ Skipped | {counts.get('skipped', 0)} |",
+            f"| **Total** | **{total}** |",
             "",
           ]
 
           if results:
-            lines.append(f"<details><summary>テスト結果一覧 ({total}件)</summary>")
-            lines.append("")
+            lines.append("| Result | Test |")
+            lines.append("| --- | --- |")
             for name in sorted(latest):
               result = latest[name]
-              lines.append(f"- {icon.get(result, '❓')} `{name}`")
-            lines.append("")
-            lines.append("</details>")
+              safe_name = name.replace("|", "\\|")
+              lines.append(f"| {label.get(result, '❓ Unknown')} | `{safe_name}` |")
           else:
             lines.append("_テスト結果を取得できませんでした。ジョブログを確認してください。_")
 
